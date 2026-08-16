@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — HTM Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0A2540;
+      --gold: #B8975A;
+      --teal: #40B5AD;
+      --warm-white: #FAFAF8;
+      --charcoal: #1C1C1E;
+      --light: #F0F0EF;
+      --mid: #8E8E93;
+      --danger: #D94F4F;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--warm-white); color: var(--charcoal); min-height: 100vh; }
+
+    header {
+      background: var(--navy);
+      padding: 0 1.25rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .back-btn {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .back-btn:hover { color: white; }
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .page { max-width: 600px; margin: 0 auto; padding: 1.5rem 1.25rem 6rem; }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 4px rgba(10,37,64,0.06);
+      border: 1px solid rgba(10,37,64,0.06);
+    }
+    .section-head {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--light);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* ORDER SUMMARY */
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--light);
+    }
+    .order-item:last-child { border-bottom: none; }
+    .item-name { font-weight: 500; font-size: 0.9rem; color: var(--navy); }
+    .item-qty { font-size: 0.75rem; color: var(--mid); margin-top: 0.15rem; }
+    .item-price { font-weight: 600; font-size: 0.9rem; color: var(--navy); }
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 0.85rem;
+      margin-top: 0.25rem;
+      border-top: 2px solid var(--navy);
+    }
+    .total-label { font-weight: 600; color: var(--navy); }
+    .total-amount {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--navy);
+    }
+    .empty-cart {
+      text-align: center;
+      padding: 2rem;
+      color: var(--mid);
+    }
+
+    /* FORM */
+    .form-group { margin-bottom: 1rem; }
+    .form-group:last-child { margin-bottom: 0; }
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1.5px solid var(--light);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: var(--charcoal);
+      background: var(--warm-white);
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--navy);
+      background: white;
+    }
+    input.error, select.error { border-color: var(--danger); }
+    textarea { resize: vertical; min-height: 70px; }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.5rem; }
+
+    /* PAYMENT */
+    .payment-info {
+      background: #f0f7ff;
+      border: 1px solid #d0e8ff;
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
+    }
+    .payment-info-title { font-weight: 600; font-size: 0.8rem; color: var(--navy); margin-bottom: 0.5rem; }
+    .payment-detail {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      margin-bottom: 0.25rem;
+    }
+    .payment-detail .label { color: var(--mid); }
+    .payment-detail .value { font-weight: 600; color: var(--navy); }
+
+    .slip-upload-area {
+      border: 2px dashed var(--light);
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      position: relative;
+    }
+    .slip-upload-area:hover { border-color: var(--navy); }
+    .slip-upload-area.has-file { border-color: var(--teal); background: #f0fbfa; }
+    .slip-upload-area input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      border: none;
+      padding: 0;
+      background: none;
+    }
+    .upload-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+    .upload-text { font-size: 0.82rem; color: var(--mid); }
+    .upload-text strong { color: var(--navy); }
+    .file-name { font-size: 0.8rem; color: var(--teal); font-weight: 600; margin-top: 0.4rem; }
+
+    /* SUBMIT */
+    .submit-btn {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      padding: 1rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      z-index: 100;
+    }
+    .submit-btn:hover { opacity: 0.9; }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .submit-btn.loading { background: var(--mid); color: white; }
+
+    .err-msg { font-size: 0.75rem; color: var(--danger); margin-top: 0.3rem; }
+    .form-note { font-size: 0.75rem; color: var(--mid); margin-top: 0.35rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="back-btn">← Back</a>
+  <span class="header-title">Checkout</span>
+  <div style="width:60px"></div>
+</header>
+
+<div class="page">
+
+  <!-- ORDER SUMMARY -->
+  <div class="section">
+    <div class="section-head">🧾 Your Order</div>
+    <div id="order-items">
+      <div class="empty-cart">Your cart is empty. <a href="index.html">Browse fish →</a></div>
+    </div>
+  </div>
+
+  <!-- DELIVERY DETAILS -->
+  <div class="section">
+    <div class="section-head">📍 Delivery Details</div>
+    <div class="form-group">
+      <label>Your Name</label>
+      <input type="text" id="customer-name" placeholder="Full name">
+      <div class="err-msg" id="err-name"></div>
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" id="customer-phone" placeholder="+960 7xxxxxx">
+      <div class="err-msg" id="err-phone"></div>
+    </div>
+    <div class="form-group">
+      <label>Building</label>
+      <select id="zone-select">
+        <option value="">Loading zones...</option>
+      </select>
+      <div class="err-msg" id="err-zone"></div>
+    </div>
+    <div class="form-group">
+      <label>Apartment / Floor</label>
+      <input type="text" id="apartment-no" placeholder="e.g. A-701">
+      <div class="err-msg" id="err-apt"></div>
+    </div>
+    <div class="form-group">
+      <label>Notes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid)">(optional)</span></label>
+      <textarea id="notes" placeholder="Any special instructions..."></textarea>
+    </div>
+  </div>
+
+  <!-- PAYMENT -->
+  <div class="section">
+    <div class="section-head">💳 Payment</div>
+    <div class="payment-info">
+      <div class="payment-info-title">Transfer to BML Account</div>
+      <div class="payment-detail"><span class="label">Account Name</span><span class="value">HTM Marketplace</span></div>
+      <div class="payment-detail"><span class="label">Account No.</span><span class="value">7730000XXXXXX</span></div>
+      <div class="payment-detail"><span class="label">Bank</span><span class="value">Bank of Maldives (BML)</span></div>
+    </div>
+    <p class="form-note" style="margin-bottom:0.75rem">Transfer the total amount and upload the payment slip below.</p>
+    <div class="slip-upload-area" id="upload-area">
+      <input type="file" id="slip-file" accept="image/*,.pdf" onchange="handleFileSelect(this)">
+      <div class="upload-icon" id="upload-icon">📎</div>
+      <div class="upload-text"><strong>Tap to upload slip</strong><br>Image or PDF</div>
+      <div class="file-name" id="file-name-display"></div>
+    </div>
+    <div class="err-msg" id="err-slip"></div>
+  </div>
+
+</div>
+
+<button class="submit-btn" id="submit-btn" onclick="submitOrder()">Place Order</button>
+
+<script>
+  const API = 'https://api.htmrentals.com/api/marketplace';
+  let cart = JSON.parse(localStorage.getItem('htm_cart') || '[]');
+
+  function renderOrderSummary() {
+    const container = document.getElementById('order-items');
+    if (!cart.length) {
+      container.innerHTML = `<div class="empty-cart">Your cart is empty. <a href="index.html">Browse fish →</a></div>`;
+      document.getElementById('submit-btn').disabled = true;
+      return;
+    }
+    let html = '';
+    let total = 0;
+    cart.forEach(item => {
+      const sub = item.qty * item.price_per_kg;
+      total += sub;
+      html += `
+        <div class="order-item">
+          <div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-qty">${item.qty.toFixed(1)} kg × MVR ${item.price_per_kg.toFixed(2)}</div>
+          </div>
+          <div class="item-price">MVR ${sub.toFixed(2)}</div>
+        </div>`;
+    });
+    html += `
+      <div class="order-total">
+        <span class="total-label">Total</span>
+        <span class="total-amount">MVR ${total.toFixed(2)}</span>
+      </div>`;
+    container.innerHTML = html;
+  }
+
+  async function loadZones() {
+    try {
+      const res = await fetch(`${API}/zones`);
+      const zones = await res.json();
+      const sel = document.getElementById('zone-select');
+      sel.innerHTML = '<option value="">Select building...</option>';
+      zones.forEach(z => {
+        sel.innerHTML += `<option value="${z.id}">${z.name}</option>`;
+      });
+    } catch (err) {
+      document.getElementById('zone-select').innerHTML = '<option value="">Could not load zones</option>';
+    }
+  }
+
+  function handleFileSelect(input) {
+    const area = document.getElementById('upload-area');
+    const nameDisplay = document.getElementById('file-name-display');
+    const icon = document.getElementById('upload-icon');
+    if (input.files[0]) {
+      area.classList.add('has-file');
+      nameDisplay.textContent = '✓ ' + input.files[0].name;
+      icon.textContent = '✅';
+    } else {
+      area.classList.remove('has-file');
+      nameDisplay.textContent = '';
+      icon.textContent = '📎';
+    }
+  }
+
+  function validate() {
+    let ok = true;
+    const fields = [
+      ['customer-name', 'err-name', 'Name is required'],
+      ['customer-phone', 'err-phone', 'Phone number is required'],
+      ['apartment-no', 'err-apt', 'Apartment number is required'],
+    ];
+    fields.forEach(([id, errId, msg]) => {
+      const el = document.getElementById(id);
+      const err = document.getElementById(errId);
+      if (!el.value.trim()) {
+        el.classList.add('error');
+        err.textContent = msg;
+        ok = false;
+      } else {
+        el.classList.remove('error');
+        err.textContent = '';
+      }
+    });
+    const zone = document.getElementById('zone-select');
+    if (!zone.value) {
+      zone.classList.add('error');
+      document.getElementById('err-zone').textContent = 'Please select a building';
+      ok = false;
+    } else {
+      zone.classList.remove('error');
+      document.getElementById('err-zone').textContent = '';
+    }
+    const slip = document.getElementById('slip-file');
+    if (!slip.files[0]) {
+      document.getElementById('err-slip').textContent = 'Please upload your payment slip';
+      ok = false;
+    } else {
+      document.getElementById('err-slip').textContent = '';
+    }
+    return ok;
+  }
+
+  async function submitOrder() {
+    if (!cart.length) return;
+    if (!validate()) return;
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.classList.add('loading');
+    btn.textContent = 'Placing Order...';
+
+    try {
+      const formData = new FormData();
+      formData.append('customer_name', document.getElementById('customer-name').value.trim());
+      formData.append('customer_phone', document.getElementById('customer-phone').value.trim());
+      formData.append('zone_id', document.getElementById('zone-select').value);
+      formData.append('apartment_no', document.getElementById('apartment-no').value.trim());
+      formData.append('notes', document.getElementById('notes').value.trim());
+      formData.append('items', JSON.stringify(cart.map(i => ({
+        product_id: i.id,
+        qty_kg: i.qty,
+        price_per_kg: i.price_per_kg
+      }))));
+      const slipFile = document.getElementById('slip-file').files[0];
+      if (slipFile) formData.append('slip', slipFile);
+
+      const res = await fetch(`${API}/orders`, { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (data.success) {
+        localStorage.removeItem('htm_cart');
+        window.location.href = `confirmation.html?ref=${data.order_ref}`;
+      } else {
+        throw new Error(data.error || 'Order failed');
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.textContent = 'Place Order';
+      alert('Something went wrong. Please try again.');
+    }
+  }
+
+  renderOrderSummary();
+  loadZones();
+</script>
+</body>
+</html>

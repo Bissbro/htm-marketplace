@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTM Marketplace — Fresh Fish Delivery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0A2540;
+      --gold: #B8975A;
+      --teal: #40B5AD;
+      --warm-white: #FAFAF8;
+      --charcoal: #1C1C1E;
+      --light: #F0F0EF;
+      --mid: #8E8E93;
+      --danger: #D94F4F;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--warm-white); color: var(--charcoal); min-height: 100vh; }
+
+    /* HEADER */
+    header {
+      background: var(--navy);
+      padding: 0 1.25rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+    .logo-icon { font-size: 1.4rem; }
+    .logo-text { color: white; font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; }
+    .logo-text span { color: var(--gold); }
+    .cart-btn {
+      background: none;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      color: white;
+      padding: 0.4rem 0.8rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: border-color 0.2s;
+    }
+    .cart-btn:hover { border-color: var(--gold); }
+    .cart-count {
+      background: var(--gold);
+      color: var(--navy);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #0d3460 100%);
+      padding: 2.5rem 1.25rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: var(--warm-white);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(184,151,90,0.2);
+      border: 1px solid rgba(184,151,90,0.4);
+      color: var(--gold);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      margin-bottom: 0.9rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      color: white;
+      font-size: 1.7rem;
+      line-height: 1.25;
+      margin-bottom: 0.6rem;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero p {
+      color: rgba(255,255,255,0.65);
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+    .hero-badges {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.75rem;
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    /* PRODUCTS */
+    .products-section { padding: 1.75rem 1.25rem 7rem; }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+    }
+
+    @media (min-width: 480px) {
+      .products-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (min-width: 768px) {
+      .products-grid { grid-template-columns: repeat(3, 1fr); }
+      .hero h1 { font-size: 2rem; }
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(10,37,64,0.06);
+      border: 1px solid rgba(10,37,64,0.06);
+      transition: box-shadow 0.2s;
+    }
+    .product-card:hover { box-shadow: 0 4px 16px rgba(10,37,64,0.1); }
+
+    .product-img {
+      height: 130px;
+      background: linear-gradient(135deg, #e8f4f8 0%, #d0eaf0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+    }
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .availability-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #e8f8f0;
+      color: #1a8a4a;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #b8e8cc;
+    }
+
+    .product-body { padding: 0.9rem; }
+    .product-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+    }
+    .product-desc {
+      font-size: 0.75rem;
+      color: var(--mid);
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+    .product-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--navy);
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+    }
+    .product-price span {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      color: var(--mid);
+      font-weight: 400;
+      margin-left: 0.15rem;
+    }
+
+    .qty-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .qty-control {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--light);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .qty-btn {
+      background: var(--light);
+      border: none;
+      width: 30px;
+      height: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      color: var(--navy);
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .qty-btn:hover { background: #e0e0de; }
+    .qty-input {
+      border: none;
+      width: 48px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--navy);
+      background: white;
+    }
+    .qty-input:focus { outline: none; }
+    .qty-label {
+      font-size: 0.7rem;
+      color: var(--mid);
+    }
+
+    .add-btn {
+      flex: 1;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.55rem 0.5rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .add-btn:hover { background: #0d3460; }
+    .add-btn:active { transform: scale(0.97); }
+    .add-btn.added { background: var(--teal); }
+
+    /* LOADING / EMPTY */
+    .state-msg {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--mid);
+    }
+    .state-msg .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+    /* CART FOOTER */
+    .cart-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--navy);
+      padding: 0.85rem 1.25rem;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      box-shadow: 0 -4px 20px rgba(10,37,64,0.2);
+    }
+    .cart-footer.visible { display: flex; }
+    .cart-info { color: white; }
+    .cart-items-count { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-bottom: 0.1rem; }
+    .cart-total { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); }
+    .checkout-btn {
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      border-radius: 8px;
+      padding: 0.65rem 1.25rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .checkout-btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+    <span class="logo-icon">🐟</span>
+    <span class="logo-text">HTM <span>Marketplace</span></span>
+  </a>
+  <button class="cart-btn" onclick="goToCart()">
+    🛒 Cart <span class="cart-count" id="cart-count">0</span>
+  </button>
+</header>
+
+<section class="hero">
+  <div class="hero-tag">🌊 Hulhumale' Phase 2 Delivery</div>
+  <h1>Fresh from the <span>Ocean</span>,<br>Straight to Your Door</h1>
+  <p>Gutted, cleaned & vacuum-packed. Ready to cook.</p>
+  <div class="hero-badges">
+    <div class="badge"><div class="badge-dot"></div> Free Delivery</div>
+    <div class="badge"><div class="badge-dot"></div> Vacuum Packed</div>
+    <div class="badge"><div class="badge-dot"></div> Ready to Cook</div>
+  </div>
+</section>
+
+<section class="products-section">
+  <div class="section-title">Today's Catch</div>
+  <div class="products-grid" id="products-grid">
+    <div class="state-msg">
+      <div class="icon">🐠</div>
+      <div>Loading fresh catch...</div>
+    </div>
+  </div>
+</section>
+
+<div class="cart-footer" id="cart-footer">
+  <div class="cart-info">
+    <div class="cart-items-count" id="footer-count"></div>
+    <div class="cart-total" id="footer-total"></div>
+  </div>
+  <button class="checkout-btn" onclick="goToCart()">Checkout →</button>
+</div>
+
+<script>
+  const API = 'https://api.htmrentals.com/api/marketplace';
+  let cart = JSON.parse(localStorage.getItem('htm_cart') || '[]');
+
+  function saveCart() {
+    localStorage.setItem('htm_cart', JSON.stringify(cart));
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    const total = cart.reduce((s, i) => s + (i.qty * i.price_per_kg), 0);
+    const totalKg = cart.reduce((s, i) => s + i.qty, 0);
+    const count = cart.length;
+
+    document.getElementById('cart-count').textContent = count;
+    const footer = document.getElementById('cart-footer');
+    if (count > 0) {
+      footer.classList.add('visible');
+      document.getElementById('footer-count').textContent = `${count} item${count>1?'s':''} · ${totalKg.toFixed(1)} kg`;
+      document.getElementById('footer-total').textContent = `MVR ${total.toFixed(2)}`;
+    } else {
+      footer.classList.remove('visible');
+    }
+  }
+
+  function addToCart(product, qty) {
+    const existing = cart.find(i => i.id === product.id);
+    if (existing) {
+      existing.qty = Math.round((existing.qty + qty) * 10) / 10;
+    } else {
+      cart.push({ id: product.id, name: product.name, qty, price_per_kg: parseFloat(product.price_per_kg) });
+    }
+    saveCart();
+  }
+
+  function getQty(id) {
+    const val = parseFloat(document.getElementById(`qty-${id}`).value);
+    return isNaN(val) || val < 0.5 ? 0.5 : Math.round(val * 10) / 10;
+  }
+
+  function changeQty(id, delta) {
+    const input = document.getElementById(`qty-${id}`);
+    let val = parseFloat(input.value) || 0.5;
+    val = Math.round((val + delta) * 10) / 10;
+    if (val < 0.5) val = 0.5;
+    if (val > 20) val = 20;
+    input.value = val.toFixed(1);
+  }
+
+  function handleAdd(product, btnId) {
+    const qty = getQty(product.id);
+    addToCart(product, qty);
+    const btn = document.getElementById(btnId);
+    btn.textContent = '✓ Added';
+    btn.classList.add('added');
+    setTimeout(() => {
+      btn.textContent = 'Add to Cart';
+      btn.classList.remove('added');
+    }, 1500);
+  }
+
+  function goToCart() {
+    if (cart.length === 0) return;
+    window.location.href = 'checkout.html';
+  }
+
+  function renderProducts(products) {
+    const grid = document.getElementById('products-grid');
+    if (!products.length) {
+      grid.innerHTML = `<div class="state-msg"><div class="icon">🎣</div><div>No fish available right now.<br>Check back soon!</div></div>`;
+      return;
+    }
+    grid.innerHTML = products.map(p => {
+      const img = p.image_url
+        ? `<img src="${p.image_url}" alt="${p.name}">`
+        : `<span>🐟</span>`;
+      return `
+      <div class="product-card">
+        <div class="product-img">
+          ${img}
+          <span class="availability-badge">● In Stock</span>
+        </div>
+        <div class="product-body">
+          <div class="product-name">${p.name}</div>
+          ${p.description ? `<div class="product-desc">${p.description}</div>` : ''}
+          <div class="product-price">MVR ${parseFloat(p.price_per_kg).toFixed(2)}<span>/ kg</span></div>
+          <div class="qty-row">
+            <div class="qty-control">
+              <button class="qty-btn" onclick="changeQty(${p.id}, -0.5)">−</button>
+              <input class="qty-input" id="qty-${p.id}" type="number" value="1.0" min="0.5" max="20" step="0.5">
+              <button class="qty-btn" onclick="changeQty(${p.id}, 0.5)">+</button>
+            </div>
+            <span class="qty-label">kg</span>
+            <button class="add-btn" id="add-${p.id}" onclick="handleAdd(${JSON.stringify(p).replace(/"/g, '&quot;')}, 'add-${p.id}')">Add to Cart</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function loadProducts() {
+    try {
+      const res = await fetch(`${API}/products`);
+      const products = await res.json();
+      renderProducts(products);
+    } catch (err) {
+      document.getElementById('products-grid').innerHTML = `<div class="state-msg"><div class="icon">⚠️</div><div>Could not load products.<br>Please try again.</div></div>`;
+    }
+  }
+
+  updateCartUI();
+  loadProducts();
+</script>
+</body>
+</html>

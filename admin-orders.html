@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Orders | HTM Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0A2540;
+      --gold: #B8975A;
+      --teal: #40B5AD;
+      --warm-white: #FAFAF8;
+      --charcoal: #1C1C1E;
+      --light: #F0F0EF;
+      --mid: #8E8E93;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--warm-white); color: var(--charcoal); }
+
+    /* AUTH GATE */
+    .auth-gate {
+      position: fixed; inset: 0;
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999; flex-direction: column; padding: 2rem;
+    }
+    .auth-box {
+      background: white; border-radius: 16px; padding: 2rem; width: 100%; max-width: 320px; text-align: center;
+    }
+    .auth-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--navy); margin-bottom: 0.4rem; }
+    .auth-logo span { color: var(--gold); }
+    .auth-sub { font-size: 0.8rem; color: var(--mid); margin-bottom: 1.5rem; }
+    .auth-input {
+      width: 100%; border: 1.5px solid var(--light); border-radius: 8px;
+      padding: 0.7rem; font-size: 0.9rem; margin-bottom: 0.75rem;
+      font-family: 'Inter', sans-serif; text-align: center; letter-spacing: 0.1em;
+    }
+    .auth-input:focus { outline: none; border-color: var(--navy); }
+    .auth-btn {
+      width: 100%; background: var(--navy); color: white; border: none;
+      border-radius: 8px; padding: 0.75rem; font-family: 'Inter', sans-serif;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    }
+    .auth-error { color: #D94F4F; font-size: 0.78rem; margin-top: 0.5rem; }
+
+    header {
+      background: var(--navy);
+      padding: 0 1.25rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-text { color: white; font-family: 'Playfair Display', serif; font-size: 0.95rem; }
+    .logo-text span { color: var(--gold); }
+    .logout-btn {
+      background: none; border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.7); font-size: 0.75rem; padding: 0.3rem 0.7rem;
+      border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif;
+    }
+
+    .admin-nav {
+      background: white;
+      border-bottom: 1px solid var(--light);
+      display: flex;
+      overflow-x: auto;
+    }
+    .nav-link {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--mid);
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s;
+    }
+    .nav-link.active { color: var(--navy); border-bottom-color: var(--navy); }
+    .nav-link:hover { color: var(--navy); }
+
+    .page { padding: 1.25rem; max-width: 800px; margin: 0 auto; }
+
+    /* STATUS FILTER */
+    .filter-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      border: 1.5px solid var(--light);
+      background: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--mid);
+      transition: all 0.15s;
+    }
+    .filter-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+
+    /* ORDER CARDS */
+    .order-card {
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 0.85rem;
+      box-shadow: 0 1px 4px rgba(10,37,64,0.06);
+      border: 1px solid rgba(10,37,64,0.06);
+      overflow: hidden;
+    }
+    .order-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 1rem;
+      cursor: pointer;
+    }
+    .order-ref { font-weight: 700; font-size: 0.85rem; color: var(--navy); }
+    .order-customer { font-size: 0.78rem; color: var(--mid); margin-top: 0.15rem; }
+    .order-meta { text-align: right; }
+    .order-amount { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--navy); }
+    .order-date { font-size: 0.72rem; color: var(--mid); margin-top: 0.15rem; }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.3rem;
+    }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-confirmed { background: #d1f7e8; color: #0a6640; }
+    .status-delivered { background: #d0eaf8; color: #0a4d7a; }
+    .status-cancelled { background: #fde8e8; color: #8a1a1a; }
+
+    .order-body {
+      border-top: 1px solid var(--light);
+      padding: 0.9rem 1rem;
+      display: none;
+    }
+    .order-body.open { display: block; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem 1rem;
+      margin-bottom: 1rem;
+    }
+    .detail-item .dlabel { font-size: 0.7rem; color: var(--mid); text-transform: uppercase; letter-spacing: 0.05em; }
+    .detail-item .dvalue { font-size: 0.85rem; color: var(--charcoal); font-weight: 500; margin-top: 0.15rem; }
+
+    .items-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+    .items-table th { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mid); text-align: left; padding: 0.4rem 0; border-bottom: 1px solid var(--light); }
+    .items-table td { font-size: 0.83rem; padding: 0.5rem 0; border-bottom: 1px solid var(--light); color: var(--charcoal); }
+    .items-table tr:last-child td { border-bottom: none; }
+
+    .slip-link {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      background: #f0f7ff; border: 1px solid #c8e0ff;
+      color: var(--navy); text-decoration: none;
+      padding: 0.45rem 0.85rem; border-radius: 7px;
+      font-size: 0.8rem; font-weight: 600;
+      margin-bottom: 1rem; transition: background 0.15s;
+    }
+    .slip-link:hover { background: #d8ecff; }
+
+    .status-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .status-btn {
+      padding: 0.45rem 0.9rem;
+      border-radius: 7px;
+      border: 1.5px solid var(--light);
+      background: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--charcoal);
+      transition: all 0.15s;
+    }
+    .status-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .status-btn.confirm { background: var(--teal); color: white; border-color: var(--teal); }
+    .status-btn.deliver { background: var(--navy); color: white; border-color: var(--navy); }
+    .status-btn.cancel { color: #D94F4F; border-color: #fde8e8; }
+    .status-btn.cancel:hover { background: #fde8e8; }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--mid);
+      font-size: 0.9rem;
+    }
+
+    .reload-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: white; border: 1.5px solid var(--light);
+      border-radius: 8px; padding: 0.5rem 1rem;
+      font-family: 'Inter', sans-serif; font-size: 0.8rem;
+      cursor: pointer; color: var(--charcoal);
+      margin-bottom: 1rem;
+    }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--navy); margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div class="auth-gate" id="auth-gate">
+  <div class="auth-box">
+    <div class="auth-logo">HTM <span>Marketplace</span></div>
+    <div class="auth-sub">Admin Access</div>
+    <input class="auth-input" type="password" id="admin-pass" placeholder="Password" onkeydown="if(event.key==='Enter')login()">
+    <button class="auth-btn" onclick="login()">Enter</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<div id="main-content" style="display:none">
+  <header>
+    <span class="logo-text">HTM <span>Marketplace</span> Admin</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+
+  <nav class="admin-nav">
+    <a href="index.html" class="nav-link active">📋 Orders</a>
+    <a href="products.html" class="nav-link">🐟 Products</a>
+    <a href="zones.html" class="nav-link">📍 Zones</a>
+    <a href="../index.html" class="nav-link">🛒 Shop</a>
+  </nav>
+
+  <div class="page">
+    <div class="page-title">Orders</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div class="filter-row" id="filter-row">
+        <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" onclick="setFilter('pending', this)">Pending</button>
+        <button class="filter-btn" onclick="setFilter('confirmed', this)">Confirmed</button>
+        <button class="filter-btn" onclick="setFilter('delivered', this)">Delivered</button>
+        <button class="filter-btn" onclick="setFilter('cancelled', this)">Cancelled</button>
+      </div>
+      <button class="reload-btn" onclick="loadOrders()">↻ Refresh</button>
+    </div>
+    <div id="orders-list"><div class="empty-state">Loading orders...</div></div>
+  </div>
+</div>
+
+<script>
+  const API = 'https://api.htmrentals.com/api/marketplace';
+  const ADMIN_PASS = 'HTMAdmin2026';
+  let allOrders = [];
+  let currentFilter = 'all';
+
+  function login() {
+    const pass = document.getElementById('admin-pass').value;
+    if (pass === ADMIN_PASS) {
+      sessionStorage.setItem('mkt_admin', 'true');
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      loadOrders();
+    } else {
+      document.getElementById('auth-error').textContent = 'Incorrect password';
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem('mkt_admin');
+    location.reload();
+  }
+
+  function checkAuth() {
+    if (sessionStorage.getItem('mkt_admin') === 'true') {
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      loadOrders();
+    }
+  }
+
+  function setFilter(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderOrders();
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-MV', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function toggleOrder(id) {
+    const body = document.getElementById(`body-${id}`);
+    body.classList.toggle('open');
+  }
+
+  async function updateStatus(id, status) {
+    try {
+      await fetch(`${API}/admin/orders/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      await loadOrders();
+    } catch (err) {
+      alert('Failed to update status');
+    }
+  }
+
+  function renderOrders() {
+    const list = document.getElementById('orders-list');
+    const filtered = currentFilter === 'all' ? allOrders : allOrders.filter(o => o.status === currentFilter);
+    if (!filtered.length) {
+      list.innerHTML = `<div class="empty-state">No ${currentFilter === 'all' ? '' : currentFilter + ' '}orders found.</div>`;
+      return;
+    }
+    list.innerHTML = filtered.map(o => {
+      const statusBtns = [];
+      if (o.status !== 'confirmed' && o.status !== 'delivered' && o.status !== 'cancelled')
+        statusBtns.push(`<button class="status-btn confirm" onclick="updateStatus(${o.id},'confirmed')">✓ Confirm</button>`);
+      if (o.status === 'confirmed')
+        statusBtns.push(`<button class="status-btn deliver" onclick="updateStatus(${o.id},'delivered')">🚚 Mark Delivered</button>`);
+      if (o.status !== 'delivered' && o.status !== 'cancelled')
+        statusBtns.push(`<button class="status-btn cancel" onclick="if(confirm('Cancel this order?'))updateStatus(${o.id},'cancelled')">✕ Cancel</button>`);
+
+      const itemsRows = (o.items||[]).map(i =>
+        `<tr><td>${i.product_name}</td><td>${parseFloat(i.qty_kg).toFixed(1)} kg</td><td>MVR ${parseFloat(i.price_per_kg).toFixed(2)}/kg</td><td>MVR ${parseFloat(i.subtotal).toFixed(2)}</td></tr>`
+      ).join('');
+
+      const slipHtml = o.slip_url
+        ? `<a class="slip-link" href="https://api.htmrentals.com${o.slip_url}" target="_blank">📎 View Payment Slip</a><br>`
+        : '<div style="font-size:0.78rem;color:var(--mid);margin-bottom:0.75rem">No slip uploaded</div>';
+
+      return `
+      <div class="order-card" id="card-${o.id}">
+        <div class="order-head" onclick="toggleOrder(${o.id})">
+          <div>
+            <div class="order-ref">${o.order_ref}</div>
+            <div class="order-customer">${o.customer_name} · ${o.customer_phone}</div>
+            <span class="status-badge status-${o.status}">${o.status}</span>
+          </div>
+          <div class="order-meta">
+            <div class="order-amount">MVR ${parseFloat(o.total_amount).toFixed(2)}</div>
+            <div class="order-date">${formatDate(o.created_at)}</div>
+          </div>
+        </div>
+        <div class="order-body" id="body-${o.id}">
+          <div class="detail-grid">
+            <div class="detail-item"><div class="dlabel">Building</div><div class="dvalue">${o.zone_name}</div></div>
+            <div class="detail-item"><div class="dlabel">Apartment</div><div class="dvalue">${o.apartment_no}</div></div>
+            ${o.notes ? `<div class="detail-item" style="grid-column:1/-1"><div class="dlabel">Notes</div><div class="dvalue">${o.notes}</div></div>` : ''}
+          </div>
+          <table class="items-table">
+            <thead><tr><th>Fish</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr></thead>
+            <tbody>${itemsRows}</tbody>
+          </table>
+          ${slipHtml}
+          <div class="status-row">${statusBtns.join('')}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function loadOrders() {
+    try {
+      const res = await fetch(`${API}/admin/orders`);
+      allOrders = await res.json();
+      renderOrders();
+    } catch (err) {
+      document.getElementById('orders-list').innerHTML = '<div class="empty-state">Failed to load orders.</div>';
+    }
+  }
+
+  checkAuth();
+</script>
+</body>
+</html>

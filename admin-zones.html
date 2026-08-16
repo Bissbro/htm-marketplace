@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Zones | HTM Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0A2540; --gold: #B8975A; --teal: #40B5AD;
+      --warm-white: #FAFAF8; --charcoal: #1C1C1E; --light: #F0F0EF; --mid: #8E8E93;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--warm-white); color: var(--charcoal); }
+
+    .auth-gate {
+      position: fixed; inset: 0; background: var(--navy);
+      display: flex; align-items: center; justify-content: center; z-index: 999;
+    }
+    .auth-box { background: white; border-radius: 16px; padding: 2rem; width: 100%; max-width: 320px; text-align: center; }
+    .auth-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--navy); margin-bottom: 0.4rem; }
+    .auth-logo span { color: var(--gold); }
+    .auth-sub { font-size: 0.8rem; color: var(--mid); margin-bottom: 1.5rem; }
+    .auth-input { width: 100%; border: 1.5px solid var(--light); border-radius: 8px; padding: 0.7rem; font-size: 0.9rem; margin-bottom: 0.75rem; font-family: 'Inter', sans-serif; text-align: center; letter-spacing: 0.1em; }
+    .auth-input:focus { outline: none; border-color: var(--navy); }
+    .auth-btn { width: 100%; background: var(--navy); color: white; border: none; border-radius: 8px; padding: 0.75rem; font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+    .auth-error { color: #D94F4F; font-size: 0.78rem; margin-top: 0.5rem; }
+
+    header { background: var(--navy); padding: 0 1.25rem; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .logo-text { color: white; font-family: 'Playfair Display', serif; font-size: 0.95rem; }
+    .logo-text span { color: var(--gold); }
+    .logout-btn { background: none; border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); font-size: 0.75rem; padding: 0.3rem 0.7rem; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+    .admin-nav { background: white; border-bottom: 1px solid var(--light); display: flex; overflow-x: auto; }
+    .nav-link { padding: 0.75rem 1.25rem; font-size: 0.82rem; font-weight: 600; color: var(--mid); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; }
+    .nav-link.active { color: var(--navy); border-bottom-color: var(--navy); }
+    .nav-link:hover { color: var(--navy); }
+
+    .page { padding: 1.25rem; max-width: 600px; margin: 0 auto; }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--navy); margin-bottom: 1.25rem; }
+
+    .add-form {
+      background: white; border-radius: 12px; padding: 1.25rem;
+      margin-bottom: 1.5rem; border: 1px solid rgba(10,37,64,0.06);
+      box-shadow: 0 1px 4px rgba(10,37,64,0.06);
+    }
+    .form-title { font-weight: 600; font-size: 0.9rem; color: var(--navy); margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--light); }
+    .add-row { display: flex; gap: 0.75rem; }
+    input {
+      flex: 1; border: 1.5px solid var(--light); border-radius: 8px;
+      padding: 0.65rem 0.85rem; font-family: 'Inter', sans-serif; font-size: 0.88rem;
+      color: var(--charcoal); background: var(--warm-white);
+    }
+    input:focus { outline: none; border-color: var(--navy); background: white; }
+    .submit-btn {
+      background: var(--navy); color: white; border: none; border-radius: 8px;
+      padding: 0.65rem 1.25rem; font-family: 'Inter', sans-serif; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+    .success-msg { color: var(--teal); font-size: 0.8rem; margin-top: 0.6rem; font-weight: 600; }
+    .error-msg { color: #D94F4F; font-size: 0.8rem; margin-top: 0.5rem; }
+
+    .zones-note {
+      background: #f0f7ff; border: 1px solid #d0e8ff; border-radius: 8px;
+      padding: 0.85rem 1rem; font-size: 0.8rem; color: #0a4d7a;
+      margin-bottom: 1.25rem; line-height: 1.5;
+    }
+
+    .zone-card {
+      background: white; border-radius: 12px; padding: 1rem 1.1rem;
+      margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;
+      border: 1px solid rgba(10,37,64,0.06); box-shadow: 0 1px 4px rgba(10,37,64,0.06);
+    }
+    .zone-info { display: flex; align-items: center; gap: 0.75rem; }
+    .zone-icon { font-size: 1.3rem; }
+    .zone-name { font-weight: 600; font-size: 0.92rem; color: var(--navy); }
+    .zone-status { font-size: 0.72rem; color: var(--mid); margin-top: 0.15rem; }
+    .toggle-btn {
+      padding: 0.4rem 0.9rem; border-radius: 7px;
+      font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600;
+      cursor: pointer; border: 1.5px solid;
+    }
+    .toggle-btn.on { background: #d1f7e8; color: #0a6640; border-color: #b8e8cc; }
+    .toggle-btn.off { background: #fde8e8; color: #8a1a1a; border-color: #f8c8c8; }
+
+    .empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--mid); font-size: 0.9rem; }
+
+    .list-title { font-weight: 600; font-size: 0.82rem; color: var(--navy); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+  </style>
+</head>
+<body>
+
+<div class="auth-gate" id="auth-gate">
+  <div class="auth-box">
+    <div class="auth-logo">HTM <span>Marketplace</span></div>
+    <div class="auth-sub">Admin Access</div>
+    <input class="auth-input" type="password" id="admin-pass" placeholder="Password" onkeydown="if(event.key==='Enter')login()">
+    <button class="auth-btn" onclick="login()">Enter</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<div id="main-content" style="display:none">
+  <header>
+    <span class="logo-text">HTM <span>Marketplace</span> Admin</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+  <nav class="admin-nav">
+    <a href="index.html" class="nav-link">📋 Orders</a>
+    <a href="products.html" class="nav-link">🐟 Products</a>
+    <a href="zones.html" class="nav-link active">📍 Zones</a>
+    <a href="../index.html" class="nav-link">🛒 Shop</a>
+  </nav>
+
+  <div class="page">
+    <div class="page-title">Delivery Zones</div>
+
+    <div class="zones-note">
+      🏢 Zones are the buildings you deliver to. Active zones appear in the checkout dropdown. Toggle off a zone to temporarily stop deliveries there.
+    </div>
+
+    <!-- ADD FORM -->
+    <div class="add-form">
+      <div class="form-title">➕ Add New Building</div>
+      <div class="add-row">
+        <input type="text" id="new-zone" placeholder="e.g. Vinares, Farukolhu Flats...">
+        <button class="submit-btn" onclick="addZone()">Add</button>
+      </div>
+      <div class="success-msg" id="add-success"></div>
+      <div class="error-msg" id="add-error"></div>
+    </div>
+
+    <!-- ZONES LIST -->
+    <div class="list-title">Current Zones</div>
+    <div id="zones-list"><div class="empty-state">Loading zones...</div></div>
+  </div>
+</div>
+
+<script>
+  const API = 'https://api.htmrentals.com/api/marketplace';
+  const ADMIN_PASS = 'HTMAdmin2026';
+  let zones = [];
+
+  function login() {
+    const pass = document.getElementById('admin-pass').value;
+    if (pass === ADMIN_PASS) {
+      sessionStorage.setItem('mkt_admin', 'true');
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      loadZones();
+    } else {
+      document.getElementById('auth-error').textContent = 'Incorrect password';
+    }
+  }
+  function logout() { sessionStorage.removeItem('mkt_admin'); location.reload(); }
+  function checkAuth() {
+    if (sessionStorage.getItem('mkt_admin') === 'true') {
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      loadZones();
+    }
+  }
+
+  async function loadZones() {
+    try {
+      const res = await fetch(`${API}/zones`);
+      zones = await res.json();
+      renderZones();
+    } catch(e) {
+      document.getElementById('zones-list').innerHTML = '<div class="empty-state">Failed to load zones.</div>';
+    }
+  }
+
+  async function addZone() {
+    const name = document.getElementById('new-zone').value.trim();
+    document.getElementById('add-success').textContent = '';
+    document.getElementById('add-error').textContent = '';
+    if (!name) { document.getElementById('add-error').textContent = 'Building name is required.'; return; }
+    try {
+      const res = await fetch(`${API}/admin/zones`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('new-zone').value = '';
+        document.getElementById('add-success').textContent = `✓ "${name}" added!`;
+        setTimeout(() => { document.getElementById('add-success').textContent = ''; }, 3000);
+        loadZones();
+      }
+    } catch(e) {
+      document.getElementById('add-error').textContent = 'Failed to add zone.';
+    }
+  }
+
+  async function toggleZone(id, currentVal) {
+    try {
+      await fetch(`${API}/admin/zones/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: currentVal ? 0 : 1 })
+      });
+      loadZones();
+    } catch(e) {
+      alert('Failed to update zone.');
+    }
+  }
+
+  function renderZones() {
+    const list = document.getElementById('zones-list');
+    if (!zones.length) {
+      list.innerHTML = '<div class="empty-state">No zones yet. Add a building above!</div>';
+      return;
+    }
+    list.innerHTML = zones.map(z => `
+      <div class="zone-card">
+        <div class="zone-info">
+          <div class="zone-icon">🏢</div>
+          <div>
+            <div class="zone-name">${z.name}</div>
+            <div class="zone-status">${z.is_active ? '● Active — accepting orders' : '○ Inactive — hidden from checkout'}</div>
+          </div>
+        </div>
+        <button class="toggle-btn ${z.is_active ? 'on' : 'off'}" onclick="toggleZone(${z.id}, ${z.is_active})">
+          ${z.is_active ? 'Active' : 'Inactive'}
+        </button>
+      </div>`).join('');
+  }
+
+  checkAuth();
+</script>
+</body>
+</html>
