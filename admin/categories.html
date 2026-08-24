@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zones — HTM Marketplace Admin</title>
+  <title>Categories — HTM Marketplace Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,31 +46,52 @@
     .panel-title { font-weight: 700; font-size: 0.86rem; color: var(--navy); margin-bottom: 0.95rem; padding-bottom: 0.7rem; border-bottom: 1px solid var(--light); }
     .add-row { display: flex; gap: 0.6rem; }
     input {
-      flex: 1; border: 1.3px solid var(--light); border-radius: 8px;
-      padding: 0.62rem 0.85rem; font-family: 'Inter', sans-serif; font-size: 0.88rem;
+      border: 1.3px solid var(--light); border-radius: 8px;
+      padding: 0.6rem 0.8rem; font-family: 'Inter', sans-serif; font-size: 0.88rem;
       color: var(--charcoal); background: var(--warm-white);
     }
     input:focus { outline: none; border-color: var(--navy); background: white; }
+    .name-input { flex: 1; }
+    .sort-input { width: 72px; text-align: center; }
     .btn-primary {
       background: var(--navy); color: white; border: none; border-radius: 8px;
-      padding: 0.62rem 1.2rem; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+      padding: 0.6rem 1.2rem; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap;
     }
     .msg-ok { color: var(--teal); font-size: 0.78rem; font-weight: 700; margin-top: 0.55rem; }
     .msg-err { color: var(--danger); font-size: 0.78rem; margin-top: 0.55rem; }
+    .hint { font-size: 0.72rem; color: var(--mid); margin-top: 0.55rem; }
 
-    .zone-row {
-      background: white; border-radius: 10px; padding: 0.9rem 1rem; margin-bottom: 0.55rem;
+    .cat-row {
+      background: white; border-radius: 10px; padding: 0.85rem 0.95rem; margin-bottom: 0.55rem;
       display: flex; align-items: center; justify-content: space-between; gap: 0.7rem;
       border: 1px solid rgba(10,37,64,0.07); box-shadow: 0 1px 3px rgba(10,37,64,0.04);
     }
-    .zone-name { font-weight: 700; font-size: 0.9rem; color: var(--navy); }
-    .zone-state { font-size: 0.72rem; color: var(--mid); margin-top: 0.15rem; }
-    .toggle-btn {
-      padding: 0.38rem 0.85rem; border-radius: 7px; font-size: 0.74rem; font-weight: 700;
-      cursor: pointer; border: 1.2px solid; flex-shrink: 0;
+    .cat-info { display: flex; align-items: center; gap: 0.65rem; min-width: 0; }
+    .cat-sort {
+      width: 26px; height: 26px; border-radius: 7px; background: var(--warm-white);
+      border: 1px solid var(--light); display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700; color: var(--mid); flex-shrink: 0;
     }
-    .toggle-btn.on { background: #D9F5EA; color: #0A6640; border-color: #BCE8D4; }
-    .toggle-btn.off { background: #FBE3E1; color: #8A241A; border-color: #F3D3D0; }
+    .cat-name { font-weight: 700; font-size: 0.88rem; color: var(--navy); }
+    .cat-state { font-size: 0.7rem; color: var(--mid); margin-top: 0.1rem; }
+    .cat-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+    .mini-btn {
+      padding: 0.32rem 0.68rem; border-radius: 7px; font-size: 0.7rem; font-weight: 700;
+      cursor: pointer; border: 1.2px solid var(--light); background: white; color: var(--charcoal);
+    }
+    .mini-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .mini-btn.on { background: #D9F5EA; color: #0A6640; border-color: #BCE8D4; }
+    .mini-btn.off { background: #FBE3E1; color: #8A241A; border-color: #F3D3D0; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(10,37,64,0.5); display: none; align-items: flex-end; justify-content: center; z-index: 500; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-radius: 16px 16px 0 0; padding: 1.4rem 1.15rem 1.9rem; width: 100%; max-width: 520px; }
+    .modal-title { font-weight: 700; font-size: 0.96rem; color: var(--navy); margin-bottom: 1rem; }
+    label { display: block; font-size: 0.68rem; font-weight: 700; color: var(--navy); margin-bottom: 0.32rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .modal input { width: 100%; margin-bottom: 0.85rem; }
+    .modal-btns { display: flex; gap: 0.7rem; }
+    .btn-cancel { flex: 1; background: var(--light); color: var(--charcoal); border: none; border-radius: 8px; padding: 0.65rem; font-size: 0.84rem; font-weight: 700; cursor: pointer; }
+    .btn-save { flex: 2; background: var(--navy); color: white; border: none; border-radius: 8px; padding: 0.65rem; font-size: 0.84rem; font-weight: 700; cursor: pointer; }
 
     .empty-state { text-align: center; padding: 2.4rem 1rem; color: var(--mid); font-size: 0.86rem; }
   </style>
@@ -96,33 +117,50 @@
     <a href="index.html" class="nav-link">Orders</a>
     <a href="products.html" class="nav-link">Products</a>
     <a href="inventory.html" class="nav-link">Inventory</a>
-    <a href="categories.html" class="nav-link">Categories</a>
-    <a href="zones.html" class="nav-link active">Zones</a>
+    <a href="categories.html" class="nav-link active">Categories</a>
+    <a href="zones.html" class="nav-link">Zones</a>
     <a href="../index.html" class="nav-link">View Shop</a>
   </nav>
 
   <div class="page">
-    <div class="page-title">Delivery Zones</div>
-    <div class="page-sub">Zones are the buildings you deliver to. Active zones appear in the checkout building dropdown. Deactivate a zone to pause deliveries there.</div>
+    <div class="page-title">Categories</div>
+    <div class="page-sub">Categories organise your shop and appear as tabs on the storefront. Lower sort numbers appear first.</div>
 
     <div class="panel">
-      <div class="panel-title">Add Building</div>
+      <div class="panel-title">Add Category</div>
       <div class="add-row">
-        <input type="text" id="new-zone" placeholder="e.g. Vinares, Farukolhu Flats" onkeydown="if(event.key==='Enter')addZone()">
-        <button class="btn-primary" onclick="addZone()">Add</button>
+        <input class="name-input" type="text" id="new-name" placeholder="Category name">
+        <input class="sort-input" type="number" id="new-sort" placeholder="Sort" value="10">
+        <button class="btn-primary" onclick="addCategory()">Add</button>
       </div>
       <div class="msg-ok" id="add-ok"></div>
       <div class="msg-err" id="add-err"></div>
     </div>
 
-    <div id="zones-list"><div class="empty-state">Loading zones…</div></div>
+    <div id="cat-list"><div class="empty-state">Loading categories…</div></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">Edit Category</div>
+    <input type="hidden" id="e-id">
+    <label>Name</label>
+    <input type="text" id="e-name">
+    <label>Sort Order</label>
+    <input type="number" id="e-sort">
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEdit()">Save</button>
+    </div>
+    <div class="msg-err" id="e-err"></div>
   </div>
 </div>
 
 <script>
   const API = 'https://api.htmrentals.com/api/marketplace';
   const ADMIN_PASS = 'HTMAdmin2026';
-  let zones = [];
+  let cats = [];
 
   function login() {
     if (document.getElementById('admin-pass').value === ADMIN_PASS) {
@@ -140,59 +178,94 @@
 
   async function load() {
     try {
-      const res = await fetch(`${API}/admin/zones`);
-      zones = await res.json();
+      const res = await fetch(`${API}/admin/categories`);
+      cats = await res.json();
       render();
     } catch (e) {
-      document.getElementById('zones-list').innerHTML = '<div class="empty-state">Failed to load zones.</div>';
+      document.getElementById('cat-list').innerHTML = '<div class="empty-state">Failed to load categories.</div>';
     }
   }
 
-  async function addZone() {
-    const name = document.getElementById('new-zone').value.trim();
+  async function addCategory() {
+    const name = document.getElementById('new-name').value.trim();
+    const sort = parseInt(document.getElementById('new-sort').value) || 0;
     document.getElementById('add-ok').textContent = '';
     document.getElementById('add-err').textContent = '';
-    if (!name) { document.getElementById('add-err').textContent = 'Building name is required.'; return; }
+    if (!name) { document.getElementById('add-err').textContent = 'Category name is required.'; return; }
     try {
-      const res = await fetch(`${API}/admin/zones`, {
+      const res = await fetch(`${API}/admin/categories`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ name, sort_order: sort })
       });
       const data = await res.json();
       if (data.success) {
-        document.getElementById('new-zone').value = '';
+        document.getElementById('new-name').value = '';
         document.getElementById('add-ok').textContent = `"${name}" added.`;
         setTimeout(() => { document.getElementById('add-ok').textContent = ''; }, 3000);
         load();
       } else throw new Error();
-    } catch (e) { document.getElementById('add-err').textContent = 'Failed to add zone.'; }
+    } catch (e) { document.getElementById('add-err').textContent = 'Failed to add category.'; }
   }
 
-  async function toggleZone(id, currentVal) {
+  async function toggleActive(id) {
+    const c = cats.find(x => x.id === id);
+    await fetch(`${API}/admin/categories/${id}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: c.name, sort_order: c.sort_order, is_active: c.is_active ? 0 : 1 })
+    });
+    load();
+  }
+
+  function openEdit(id) {
+    const c = cats.find(x => x.id === id);
+    document.getElementById('e-id').value = c.id;
+    document.getElementById('e-name').value = c.name;
+    document.getElementById('e-sort').value = c.sort_order;
+    document.getElementById('e-err').textContent = '';
+    document.getElementById('edit-modal').classList.add('open');
+  }
+  function closeModal() { document.getElementById('edit-modal').classList.remove('open'); }
+
+  async function saveEdit() {
+    const id = document.getElementById('e-id').value;
+    const c = cats.find(x => x.id == id);
+    const name = document.getElementById('e-name').value.trim();
+    if (!name) { document.getElementById('e-err').textContent = 'Name required.'; return; }
     try {
-      await fetch(`${API}/admin/zones/${id}`, {
+      await fetch(`${API}/admin/categories/${id}`, {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ is_active: currentVal ? 0 : 1 })
+        body: JSON.stringify({
+          name,
+          sort_order: parseInt(document.getElementById('e-sort').value) || 0,
+          is_active: c.is_active
+        })
       });
+      closeModal();
       load();
-    } catch (e) { alert('Failed to update zone.'); }
+    } catch (e) { document.getElementById('e-err').textContent = 'Failed to save.'; }
   }
 
   function render() {
-    const list = document.getElementById('zones-list');
-    if (!zones.length) {
-      list.innerHTML = '<div class="empty-state">No zones yet. Add a building above.</div>';
+    const list = document.getElementById('cat-list');
+    if (!cats.length) {
+      list.innerHTML = '<div class="empty-state">No categories yet.</div>';
       return;
     }
-    list.innerHTML = zones.map(z => `
-      <div class="zone-row">
-        <div>
-          <div class="zone-name">${z.name}</div>
-          <div class="zone-state">${z.is_active ? 'Active — accepting orders' : 'Inactive — hidden from checkout'}</div>
+    list.innerHTML = cats.map(c => `
+      <div class="cat-row">
+        <div class="cat-info">
+          <div class="cat-sort">${c.sort_order}</div>
+          <div>
+            <div class="cat-name">${c.name}</div>
+            <div class="cat-state">${c.is_active ? 'Visible on storefront' : 'Hidden from storefront'}</div>
+          </div>
         </div>
-        <button class="toggle-btn ${z.is_active ? 'on' : 'off'}" onclick="toggleZone(${z.id}, ${z.is_active})">
-          ${z.is_active ? 'Active' : 'Inactive'}
-        </button>
+        <div class="cat-actions">
+          <button class="mini-btn" onclick="openEdit(${c.id})">Edit</button>
+          <button class="mini-btn ${c.is_active ? 'on' : 'off'}" onclick="toggleActive(${c.id})">
+            ${c.is_active ? 'Active' : 'Inactive'}
+          </button>
+        </div>
       </div>`).join('');
   }
 

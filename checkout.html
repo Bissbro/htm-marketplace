@@ -4,114 +4,109 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout — HTM Marketplace</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --navy: #0A2540;
-      --gold: #B8975A;
-      --teal: #40B5AD;
-      --warm-white: #FAFAF8;
-      --charcoal: #1C1C1E;
-      --light: #F0F0EF;
-      --mid: #8E8E93;
-      --danger: #D94F4F;
+      --navy: #0A2540; --navy-2: #0D3460; --gold: #B8975A; --teal: #40B5AD;
+      --warm-white: #FAFAF8; --charcoal: #1C1C1E; --light: #ECECEA; --mid: #8E8E93; --danger: #C0392B;
     }
     body { font-family: 'Inter', sans-serif; background: var(--warm-white); color: var(--charcoal); min-height: 100vh; }
+    button { font-family: 'Inter', sans-serif; }
 
     header {
       background: var(--navy);
-      padding: 0 1.25rem;
-      height: 60px;
+      padding: 0 1.1rem;
+      height: 58px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
     }
     .back-btn {
-      color: rgba(255,255,255,0.7);
+      color: rgba(255,255,255,0.75);
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
+      font-weight: 500;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
+    .back-btn svg { width: 15px; height: 15px; }
     .back-btn:hover { color: white; }
-    .header-title {
-      font-family: 'Playfair Display', serif;
-      color: white;
-      font-size: 1rem;
-    }
+    .header-title { font-family: 'Playfair Display', serif; color: white; font-size: 1rem; font-weight: 600; }
 
-    .page { max-width: 600px; margin: 0 auto; padding: 1.5rem 1.25rem 6rem; }
+    .page { max-width: 620px; margin: 0 auto; padding: 1.3rem 1.1rem 6.5rem; }
 
     .section {
       background: white;
       border-radius: 12px;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 1px 4px rgba(10,37,64,0.06);
-      border: 1px solid rgba(10,37,64,0.06);
+      padding: 1.15rem;
+      margin-bottom: 0.95rem;
+      box-shadow: 0 1px 3px rgba(10,37,64,0.05);
+      border: 1px solid rgba(10,37,64,0.07);
     }
     .section-head {
-      font-weight: 600;
-      font-size: 0.9rem;
+      font-weight: 700;
+      font-size: 0.88rem;
       color: var(--navy);
       margin-bottom: 1rem;
-      padding-bottom: 0.75rem;
+      padding-bottom: 0.7rem;
       border-bottom: 1px solid var(--light);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
     }
 
-    /* ORDER SUMMARY */
+    /* ORDER ITEMS */
     .order-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0.6rem 0;
       border-bottom: 1px solid var(--light);
+      gap: 0.75rem;
     }
-    .order-item:last-child { border-bottom: none; }
-    .item-name { font-weight: 500; font-size: 0.9rem; color: var(--navy); }
-    .item-qty { font-size: 0.75rem; color: var(--mid); margin-top: 0.15rem; }
-    .item-price { font-weight: 600; font-size: 0.9rem; color: var(--navy); }
+    .order-item:last-of-type { border-bottom: none; }
+    .item-name { font-weight: 600; font-size: 0.88rem; color: var(--navy); }
+    .item-name-2 { font-size: 0.72rem; color: var(--mid); font-weight: 500; }
+    .item-qty { font-size: 0.74rem; color: var(--mid); margin-top: 0.2rem; }
+    .item-right { text-align: right; flex-shrink: 0; }
+    .item-price { font-weight: 700; font-size: 0.88rem; color: var(--navy); }
+    .item-remove {
+      background: none; border: none; color: var(--mid);
+      font-size: 0.7rem; cursor: pointer; margin-top: 0.25rem;
+      text-decoration: underline; font-family: 'Inter', sans-serif;
+    }
+    .item-remove:hover { color: var(--danger); }
     .order-total {
       display: flex;
       justify-content: space-between;
+      align-items: baseline;
       padding-top: 0.85rem;
-      margin-top: 0.25rem;
+      margin-top: 0.3rem;
       border-top: 2px solid var(--navy);
     }
-    .total-label { font-weight: 600; color: var(--navy); }
-    .total-amount {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      color: var(--navy);
-    }
-    .empty-cart {
-      text-align: center;
-      padding: 2rem;
-      color: var(--mid);
-    }
+    .total-label { font-weight: 700; font-size: 0.88rem; color: var(--navy); }
+    .total-amount { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: var(--navy); }
+    .empty-cart { text-align: center; padding: 1.8rem 1rem; color: var(--mid); font-size: 0.88rem; }
+    .empty-cart a { color: var(--navy); font-weight: 600; }
 
     /* FORM */
-    .form-group { margin-bottom: 1rem; }
+    .form-group { margin-bottom: 0.95rem; }
     .form-group:last-child { margin-bottom: 0; }
     label {
       display: block;
-      font-size: 0.78rem;
-      font-weight: 600;
+      font-size: 0.72rem;
+      font-weight: 700;
       color: var(--navy);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.38rem;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
     }
+    label .opt { font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--mid); }
     input, select, textarea {
       width: 100%;
-      border: 1.5px solid var(--light);
-      border-radius: 8px;
-      padding: 0.65rem 0.85rem;
+      border: 1.3px solid var(--light);
+      border-radius: 9px;
+      padding: 0.66rem 0.85rem;
       font-family: 'Inter', sans-serif;
       font-size: 0.9rem;
       color: var(--charcoal);
@@ -119,120 +114,106 @@
       transition: border-color 0.2s;
       -webkit-appearance: none;
     }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--navy);
-      background: white;
-    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy); background: white; }
     input.error, select.error { border-color: var(--danger); }
-    textarea { resize: vertical; min-height: 70px; }
-    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.5rem; }
+    textarea { resize: vertical; min-height: 68px; }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.85rem center;
+      padding-right: 2.5rem;
+    }
 
     /* PAYMENT */
     .payment-info {
-      background: #f0f7ff;
-      border: 1px solid #d0e8ff;
-      border-radius: 8px;
+      background: #F2F7FB;
+      border: 1px solid #DBE8F2;
+      border-radius: 9px;
       padding: 0.9rem 1rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.9rem;
     }
-    .payment-info-title { font-weight: 600; font-size: 0.8rem; color: var(--navy); margin-bottom: 0.5rem; }
-    .payment-detail {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.82rem;
-      margin-bottom: 0.25rem;
-    }
-    .payment-detail .label { color: var(--mid); }
-    .payment-detail .value { font-weight: 600; color: var(--navy); }
+    .payment-info-title { font-weight: 700; font-size: 0.78rem; color: var(--navy); margin-bottom: 0.55rem; }
+    .payment-detail { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 0.28rem; }
+    .payment-detail:last-child { margin-bottom: 0; }
+    .payment-detail .lbl { color: var(--mid); }
+    .payment-detail .val { font-weight: 700; color: var(--navy); }
 
-    .slip-upload-area {
-      border: 2px dashed var(--light);
-      border-radius: 8px;
-      padding: 1.25rem;
+    .upload-area {
+      border: 1.6px dashed #D5D5D2;
+      border-radius: 9px;
+      padding: 1.15rem;
       text-align: center;
       cursor: pointer;
       transition: border-color 0.2s;
       position: relative;
     }
-    .slip-upload-area:hover { border-color: var(--navy); }
-    .slip-upload-area.has-file { border-color: var(--teal); background: #f0fbfa; }
-    .slip-upload-area input[type=file] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-      border: none;
-      padding: 0;
-      background: none;
+    .upload-area:hover { border-color: var(--navy); }
+    .upload-area.has-file { border-color: var(--teal); background: #F1FAF8; border-style: solid; }
+    .upload-area input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+      width: 100%; height: 100%; border: none; padding: 0; background: none;
     }
-    .upload-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
-    .upload-text { font-size: 0.82rem; color: var(--mid); }
+    .upload-area svg { width: 22px; height: 22px; color: var(--mid); margin-bottom: 0.4rem; }
+    .upload-area.has-file svg { color: var(--teal); }
+    .upload-text { font-size: 0.8rem; color: var(--mid); line-height: 1.45; }
     .upload-text strong { color: var(--navy); }
-    .file-name { font-size: 0.8rem; color: var(--teal); font-weight: 600; margin-top: 0.4rem; }
+    .file-name { font-size: 0.78rem; color: var(--teal); font-weight: 700; margin-top: 0.35rem; word-break: break-all; }
 
-    /* SUBMIT */
     .submit-btn {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       background: var(--gold);
       color: var(--navy);
       border: none;
       padding: 1rem;
-      font-family: 'Inter', sans-serif;
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 700;
       cursor: pointer;
       transition: opacity 0.2s;
       z-index: 100;
     }
-    .submit-btn:hover { opacity: 0.9; }
+    .submit-btn:hover { opacity: 0.93; }
     .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .submit-btn.loading { background: var(--mid); color: white; }
 
-    .err-msg { font-size: 0.75rem; color: var(--danger); margin-top: 0.3rem; }
-    .form-note { font-size: 0.75rem; color: var(--mid); margin-top: 0.35rem; }
+    .err-msg { font-size: 0.73rem; color: var(--danger); margin-top: 0.3rem; font-weight: 500; }
+    .form-note { font-size: 0.75rem; color: var(--mid); line-height: 1.5; }
   </style>
 </head>
 <body>
 
 <header>
-  <a href="index.html" class="back-btn">← Back</a>
+  <a href="index.html" class="back-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back
+  </a>
   <span class="header-title">Checkout</span>
-  <div style="width:60px"></div>
+  <div style="width:58px"></div>
 </header>
 
 <div class="page">
 
-  <!-- ORDER SUMMARY -->
   <div class="section">
-    <div class="section-head">🧾 Your Order</div>
-    <div id="order-items">
-      <div class="empty-cart">Your cart is empty. <a href="index.html">Browse fish →</a></div>
-    </div>
+    <div class="section-head">Your Order</div>
+    <div id="order-items"></div>
   </div>
 
-  <!-- DELIVERY DETAILS -->
   <div class="section">
-    <div class="section-head">📍 Delivery Details</div>
+    <div class="section-head">Delivery Details</div>
     <div class="form-group">
       <label>Your Name</label>
-      <input type="text" id="customer-name" placeholder="Full name">
+      <input type="text" id="customer-name" placeholder="Full name" autocomplete="name">
       <div class="err-msg" id="err-name"></div>
     </div>
     <div class="form-group">
       <label>Phone Number</label>
-      <input type="tel" id="customer-phone" placeholder="+960 7xxxxxx">
+      <input type="tel" id="customer-phone" placeholder="+960 7xxxxxx" autocomplete="tel">
       <div class="err-msg" id="err-phone"></div>
     </div>
     <div class="form-group">
       <label>Building</label>
       <select id="zone-select">
-        <option value="">Loading zones...</option>
+        <option value="">Loading…</option>
       </select>
       <div class="err-msg" id="err-zone"></div>
     </div>
@@ -242,25 +223,24 @@
       <div class="err-msg" id="err-apt"></div>
     </div>
     <div class="form-group">
-      <label>Notes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid)">(optional)</span></label>
-      <textarea id="notes" placeholder="Any special instructions..."></textarea>
+      <label>Notes <span class="opt">(optional)</span></label>
+      <textarea id="notes" placeholder="Any special instructions"></textarea>
     </div>
   </div>
 
-  <!-- PAYMENT -->
   <div class="section">
-    <div class="section-head">💳 Payment</div>
+    <div class="section-head">Payment</div>
     <div class="payment-info">
       <div class="payment-info-title">Transfer to BML Account</div>
-      <div class="payment-detail"><span class="label">Account Name</span><span class="value">HTM Marketplace</span></div>
-      <div class="payment-detail"><span class="label">Account No.</span><span class="value">7730000XXXXXX</span></div>
-      <div class="payment-detail"><span class="label">Bank</span><span class="value">Bank of Maldives (BML)</span></div>
+      <div class="payment-detail"><span class="lbl">Account Name</span><span class="val">HTM Marketplace</span></div>
+      <div class="payment-detail"><span class="lbl">Account No.</span><span class="val">7730000XXXXXX</span></div>
+      <div class="payment-detail"><span class="lbl">Bank</span><span class="val">Bank of Maldives</span></div>
     </div>
-    <p class="form-note" style="margin-bottom:0.75rem">Transfer the total amount and upload the payment slip below.</p>
-    <div class="slip-upload-area" id="upload-area">
+    <p class="form-note" style="margin-bottom:0.75rem">Transfer the total amount, then upload your payment slip below. We confirm your order once the payment is verified.</p>
+    <div class="upload-area" id="upload-area">
       <input type="file" id="slip-file" accept="image/*,.pdf" onchange="handleFileSelect(this)">
-      <div class="upload-icon" id="upload-icon">📎</div>
-      <div class="upload-text"><strong>Tap to upload slip</strong><br>Image or PDF</div>
+      <svg id="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <div class="upload-text"><strong>Tap to upload payment slip</strong><br>Image or PDF</div>
       <div class="file-name" id="file-name-display"></div>
     </div>
     <div class="err-msg" id="err-slip"></div>
@@ -274,25 +254,42 @@
   const API = 'https://api.htmrentals.com/api/marketplace';
   let cart = JSON.parse(localStorage.getItem('htm_cart') || '[]');
 
+  function qtyText(item) {
+    const q = item.unit_type === 'kg' ? item.qty.toFixed(1) : String(Math.round(item.qty));
+    return `${q} ${item.unit_label} × MVR ${item.price_per_kg.toFixed(2)}`;
+  }
+
+  function removeItem(idx) {
+    cart.splice(idx, 1);
+    localStorage.setItem('htm_cart', JSON.stringify(cart));
+    renderOrderSummary();
+  }
+
   function renderOrderSummary() {
     const container = document.getElementById('order-items');
+    const btn = document.getElementById('submit-btn');
     if (!cart.length) {
-      container.innerHTML = `<div class="empty-cart">Your cart is empty. <a href="index.html">Browse fish →</a></div>`;
-      document.getElementById('submit-btn').disabled = true;
+      container.innerHTML = `<div class="empty-cart">Your cart is empty. <a href="index.html">Browse products</a></div>`;
+      btn.disabled = true;
       return;
     }
+    btn.disabled = false;
     let html = '';
     let total = 0;
-    cart.forEach(item => {
+    cart.forEach((item, idx) => {
       const sub = item.qty * item.price_per_kg;
       total += sub;
       html += `
         <div class="order-item">
           <div>
             <div class="item-name">${item.name}</div>
-            <div class="item-qty">${item.qty.toFixed(1)} kg × MVR ${item.price_per_kg.toFixed(2)}</div>
+            ${item.name_secondary ? `<div class="item-name-2">${item.name_secondary}</div>` : ''}
+            <div class="item-qty">${qtyText(item)}</div>
           </div>
-          <div class="item-price">MVR ${sub.toFixed(2)}</div>
+          <div class="item-right">
+            <div class="item-price">MVR ${sub.toFixed(2)}</div>
+            <button class="item-remove" onclick="removeItem(${idx})">Remove</button>
+          </div>
         </div>`;
     });
     html += `
@@ -308,27 +305,22 @@
       const res = await fetch(`${API}/zones`);
       const zones = await res.json();
       const sel = document.getElementById('zone-select');
-      sel.innerHTML = '<option value="">Select building...</option>';
-      zones.forEach(z => {
-        sel.innerHTML += `<option value="${z.id}">${z.name}</option>`;
-      });
+      sel.innerHTML = '<option value="">Select building</option>';
+      zones.forEach(z => { sel.innerHTML += `<option value="${z.id}">${z.name}</option>`; });
     } catch (err) {
-      document.getElementById('zone-select').innerHTML = '<option value="">Could not load zones</option>';
+      document.getElementById('zone-select').innerHTML = '<option value="">Could not load buildings</option>';
     }
   }
 
   function handleFileSelect(input) {
     const area = document.getElementById('upload-area');
     const nameDisplay = document.getElementById('file-name-display');
-    const icon = document.getElementById('upload-icon');
     if (input.files[0]) {
       area.classList.add('has-file');
-      nameDisplay.textContent = '✓ ' + input.files[0].name;
-      icon.textContent = '✅';
+      nameDisplay.textContent = input.files[0].name;
     } else {
       area.classList.remove('has-file');
       nameDisplay.textContent = '';
-      icon.textContent = '📎';
     }
   }
 
@@ -342,31 +334,15 @@
     fields.forEach(([id, errId, msg]) => {
       const el = document.getElementById(id);
       const err = document.getElementById(errId);
-      if (!el.value.trim()) {
-        el.classList.add('error');
-        err.textContent = msg;
-        ok = false;
-      } else {
-        el.classList.remove('error');
-        err.textContent = '';
-      }
+      if (!el.value.trim()) { el.classList.add('error'); err.textContent = msg; ok = false; }
+      else { el.classList.remove('error'); err.textContent = ''; }
     });
     const zone = document.getElementById('zone-select');
-    if (!zone.value) {
-      zone.classList.add('error');
-      document.getElementById('err-zone').textContent = 'Please select a building';
-      ok = false;
-    } else {
-      zone.classList.remove('error');
-      document.getElementById('err-zone').textContent = '';
-    }
+    if (!zone.value) { zone.classList.add('error'); document.getElementById('err-zone').textContent = 'Please select your building'; ok = false; }
+    else { zone.classList.remove('error'); document.getElementById('err-zone').textContent = ''; }
     const slip = document.getElementById('slip-file');
-    if (!slip.files[0]) {
-      document.getElementById('err-slip').textContent = 'Please upload your payment slip';
-      ok = false;
-    } else {
-      document.getElementById('err-slip').textContent = '';
-    }
+    if (!slip.files[0]) { document.getElementById('err-slip').textContent = 'Please upload your payment slip'; ok = false; }
+    else { document.getElementById('err-slip').textContent = ''; }
     return ok;
   }
 
@@ -377,7 +353,7 @@
     const btn = document.getElementById('submit-btn');
     btn.disabled = true;
     btn.classList.add('loading');
-    btn.textContent = 'Placing Order...';
+    btn.textContent = 'Placing Order…';
 
     try {
       const formData = new FormData();

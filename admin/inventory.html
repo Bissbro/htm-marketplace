@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory — HTM Marketplace Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0A2540; --gold: #B8975A; --teal: #40B5AD;
+      --warm-white: #FAFAF8; --charcoal: #1C1C1E; --light: #ECECEA; --mid: #8E8E93; --danger: #C0392B;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--warm-white); color: var(--charcoal); }
+    button { font-family: 'Inter', sans-serif; }
+
+    .auth-gate { position: fixed; inset: 0; background: var(--navy); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 2rem; }
+    .auth-box { background: white; border-radius: 14px; padding: 2rem; width: 100%; max-width: 320px; text-align: center; }
+    .auth-logo { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+    .auth-logo span { color: var(--gold); }
+    .auth-sub { font-size: 0.78rem; color: var(--mid); margin-bottom: 1.4rem; }
+    .auth-input { width: 100%; border: 1.3px solid var(--light); border-radius: 9px; padding: 0.7rem; font-size: 0.9rem; margin-bottom: 0.7rem; font-family: 'Inter', sans-serif; text-align: center; letter-spacing: 0.08em; }
+    .auth-input:focus { outline: none; border-color: var(--navy); }
+    .auth-btn { width: 100%; background: var(--navy); color: white; border: none; border-radius: 9px; padding: 0.72rem; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+    .auth-error { color: var(--danger); font-size: 0.76rem; margin-top: 0.5rem; }
+
+    header { background: var(--navy); padding: 0 1.1rem; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .logo-text { color: white; font-family: 'Playfair Display', serif; font-size: 0.92rem; font-weight: 600; }
+    .logo-text span { color: var(--gold); }
+    .logout-btn { background: none; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.7); font-size: 0.72rem; padding: 0.32rem 0.7rem; border-radius: 7px; cursor: pointer; }
+
+    .admin-nav { background: white; border-bottom: 1px solid var(--light); display: flex; overflow-x: auto; scrollbar-width: none; }
+    .admin-nav::-webkit-scrollbar { display: none; }
+    .nav-link { padding: 0.72rem 1rem; font-size: 0.8rem; font-weight: 600; color: var(--mid); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; }
+    .nav-link.active { color: var(--navy); border-bottom-color: var(--navy); }
+    .nav-link:hover { color: var(--navy); }
+
+    .page { padding: 1.15rem; max-width: 760px; margin: 0 auto; }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.35rem; }
+    .page-sub { font-size: 0.78rem; color: var(--mid); margin-bottom: 1.1rem; line-height: 1.5; }
+
+    .inv-cat-head { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--mid); margin: 1.1rem 0 0.55rem; }
+    .inv-row {
+      background: white; border-radius: 10px; padding: 0.85rem 0.95rem; margin-bottom: 0.55rem;
+      border: 1px solid rgba(10,37,64,0.07); box-shadow: 0 1px 3px rgba(10,37,64,0.04);
+    }
+    .inv-top { display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; }
+    .inv-name { font-weight: 700; font-size: 0.87rem; color: var(--navy); }
+    .inv-name small { font-weight: 500; color: var(--mid); font-size: 0.72rem; }
+    .inv-balance { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; flex-shrink: 0; }
+    .inv-balance.ok { color: var(--navy); }
+    .inv-balance.zero { color: var(--danger); }
+    .inv-balance small { font-family: 'Inter', sans-serif; font-size: 0.66rem; font-weight: 600; color: var(--mid); }
+    .inv-actions { display: flex; gap: 0.45rem; margin-top: 0.65rem; flex-wrap: wrap; }
+    .inv-btn {
+      padding: 0.38rem 0.75rem; border-radius: 7px; font-size: 0.72rem; font-weight: 700;
+      cursor: pointer; border: 1.2px solid var(--light); background: white; color: var(--charcoal); transition: all 0.15s;
+    }
+    .inv-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .inv-btn.primary { background: var(--teal); border-color: var(--teal); color: white; }
+    .inv-btn.primary:hover { opacity: 0.9; color: white; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(10,37,64,0.5); display: none; align-items: flex-end; justify-content: center; z-index: 500; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-radius: 16px 16px 0 0; padding: 1.4rem 1.15rem 1.9rem; width: 100%; max-width: 560px; max-height: 88vh; overflow-y: auto; }
+    .modal-title { font-weight: 700; font-size: 0.96rem; color: var(--navy); }
+    .modal-sub { font-size: 0.76rem; color: var(--mid); margin: 0.25rem 0 1.05rem; }
+    label { display: block; font-size: 0.68rem; font-weight: 700; color: var(--navy); margin-bottom: 0.32rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    input {
+      width: 100%; border: 1.3px solid var(--light); border-radius: 8px;
+      padding: 0.62rem 0.8rem; font-family: 'Inter', sans-serif; font-size: 0.9rem; margin-bottom: 0.85rem;
+      color: var(--charcoal); background: var(--warm-white);
+    }
+    input:focus { outline: none; border-color: var(--navy); background: white; }
+    .hint { font-size: 0.72rem; color: var(--mid); margin: -0.5rem 0 0.85rem; line-height: 1.45; }
+    .modal-btns { display: flex; gap: 0.7rem; margin-top: 0.4rem; }
+    .btn-cancel { flex: 1; background: var(--light); color: var(--charcoal); border: none; border-radius: 8px; padding: 0.65rem; font-size: 0.84rem; font-weight: 700; cursor: pointer; }
+    .btn-save { flex: 2; background: var(--navy); color: white; border: none; border-radius: 8px; padding: 0.65rem; font-size: 0.84rem; font-weight: 700; cursor: pointer; }
+    .msg-err { color: var(--danger); font-size: 0.78rem; margin-top: 0.55rem; }
+    .msg-ok { color: var(--teal); font-size: 0.78rem; font-weight: 700; margin-top: 0.55rem; }
+
+    .hist-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.7rem; padding: 0.55rem 0; border-bottom: 1px solid var(--light); }
+    .hist-row:last-child { border-bottom: none; }
+    .hist-type { font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.14rem 0.45rem; border-radius: 5px; display: inline-block; }
+    .t-stock_in { background: #D9F5EA; color: #0A6640; }
+    .t-sale { background: #DCEAF8; color: #0A4D7A; }
+    .t-adjustment { background: #FDF3D7; color: #7A5C04; }
+    .t-return { background: #EFE5F7; color: #5B2D82; }
+    .hist-note { font-size: 0.74rem; color: var(--charcoal); margin-top: 0.25rem; }
+    .hist-date { font-size: 0.66rem; color: var(--mid); margin-top: 0.15rem; }
+    .hist-qty { font-weight: 700; font-size: 0.86rem; flex-shrink: 0; }
+    .hist-qty.pos { color: #14784A; }
+    .hist-qty.neg { color: var(--danger); }
+
+    .empty-state { text-align: center; padding: 2.4rem 1rem; color: var(--mid); font-size: 0.86rem; }
+  </style>
+</head>
+<body>
+
+<div class="auth-gate" id="auth-gate">
+  <div class="auth-box">
+    <div class="auth-logo">HTM <span>Marketplace</span></div>
+    <div class="auth-sub">Admin Access</div>
+    <input class="auth-input" type="password" id="admin-pass" placeholder="Password" onkeydown="if(event.key==='Enter')login()">
+    <button class="auth-btn" onclick="login()">Sign In</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<div id="main-content" style="display:none">
+  <header>
+    <span class="logo-text">HTM <span>Marketplace</span> · Admin</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+  <nav class="admin-nav">
+    <a href="index.html" class="nav-link">Orders</a>
+    <a href="products.html" class="nav-link">Products</a>
+    <a href="inventory.html" class="nav-link active">Inventory</a>
+    <a href="categories.html" class="nav-link">Categories</a>
+    <a href="zones.html" class="nav-link">Zones</a>
+    <a href="../index.html" class="nav-link">View Shop</a>
+  </nav>
+
+  <div class="page">
+    <div class="page-title">Inventory</div>
+    <div class="page-sub">Stock In when you receive goods. Adjust for spoilage or offline sales. Count to reconcile physical stock — the variance posts automatically. Confirmed orders deduct on their own.</div>
+    <div id="inv-list"><div class="empty-state">Loading inventory…</div></div>
+  </div>
+</div>
+
+<!-- ACTION MODAL -->
+<div class="modal-overlay" id="action-modal">
+  <div class="modal">
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-sub" id="m-sub"></div>
+    <input type="hidden" id="m-product">
+    <input type="hidden" id="m-mode">
+    <label id="m-qty-label">Quantity</label>
+    <input type="number" id="m-qty" step="0.1" inputmode="decimal">
+    <div class="hint" id="m-hint"></div>
+    <div id="m-note-wrap">
+      <label>Note</label>
+      <input type="text" id="m-note" placeholder="e.g. Morning purchase, spoilage, WhatsApp sale">
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="submitAction()">Save</button>
+    </div>
+    <div class="msg-err" id="m-err"></div>
+    <div class="msg-ok" id="m-ok"></div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
+<div class="modal-overlay" id="hist-modal">
+  <div class="modal">
+    <div class="modal-title" id="h-title">Movement History</div>
+    <div class="modal-sub" id="h-sub"></div>
+    <div id="hist-list"></div>
+    <div class="modal-btns" style="margin-top:1.1rem">
+      <button class="btn-cancel" style="flex:1" onclick="closeHist()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = 'https://api.htmrentals.com/api/marketplace';
+  const ADMIN_PASS = 'HTMAdmin2026';
+  let items = [];
+
+  function login() {
+    if (document.getElementById('admin-pass').value === ADMIN_PASS) {
+      sessionStorage.setItem('mkt_admin', 'true');
+      showMain();
+    } else document.getElementById('auth-error').textContent = 'Incorrect password';
+  }
+  function logout() { sessionStorage.removeItem('mkt_admin'); location.reload(); }
+  function showMain() {
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    load();
+  }
+  function checkAuth() { if (sessionStorage.getItem('mkt_admin') === 'true') showMain(); }
+
+  function fmtBal(it) {
+    const b = parseFloat(it.stock_balance);
+    return (it.unit_type === 'kg' ? b.toFixed(1) : String(Math.round(b)));
+  }
+
+  async function load() {
+    try {
+      const res = await fetch(`${API}/admin/inventory/balances`);
+      items = await res.json();
+      render();
+    } catch (e) {
+      document.getElementById('inv-list').innerHTML = '<div class="empty-state">Failed to load inventory.</div>';
+    }
+  }
+
+  function render() {
+    const list = document.getElementById('inv-list');
+    if (!items.length) {
+      list.innerHTML = '<div class="empty-state">No products yet. Add products first.</div>';
+      return;
+    }
+    const groups = {}; const order = [];
+    items.forEach(it => {
+      const key = it.category_name || 'Uncategorised';
+      if (!groups[key]) { groups[key] = []; order.push(key); }
+      groups[key].push(it);
+    });
+    list.innerHTML = order.map(cat => `
+      <div class="inv-cat-head">${cat}</div>
+      ${groups[cat].map(it => {
+        const bal = parseFloat(it.stock_balance);
+        return `
+        <div class="inv-row">
+          <div class="inv-top">
+            <div class="inv-name">${it.name} ${it.name_secondary ? `<small>· ${it.name_secondary}</small>` : ''}</div>
+            <div class="inv-balance ${bal > 0 ? 'ok' : 'zero'}">${fmtBal(it)} <small>${it.unit_label || 'kg'}</small></div>
+          </div>
+          <div class="inv-actions">
+            <button class="inv-btn primary" onclick="openAction(${it.id}, 'stock_in')">Stock In</button>
+            <button class="inv-btn" onclick="openAction(${it.id}, 'adjustment')">Adjust</button>
+            <button class="inv-btn" onclick="openAction(${it.id}, 'count')">Count</button>
+            <button class="inv-btn" onclick="openHist(${it.id})">History</button>
+          </div>
+        </div>`;
+      }).join('')}
+    `).join('');
+  }
+
+  function openAction(id, mode) {
+    const it = items.find(x => x.id === id);
+    document.getElementById('m-product').value = id;
+    document.getElementById('m-mode').value = mode;
+    document.getElementById('m-qty').value = '';
+    document.getElementById('m-note').value = '';
+    document.getElementById('m-err').textContent = '';
+    document.getElementById('m-ok').textContent = '';
+    const unit = it.unit_label || 'kg';
+    const bal = fmtBal(it);
+
+    if (mode === 'stock_in') {
+      document.getElementById('m-title').textContent = `Stock In — ${it.name}`;
+      document.getElementById('m-sub').textContent = `Current balance: ${bal} ${unit}`;
+      document.getElementById('m-qty-label').textContent = `Quantity Received (${unit})`;
+      document.getElementById('m-hint').textContent = 'Enter the amount you received or purchased.';
+      document.getElementById('m-note-wrap').style.display = 'block';
+    } else if (mode === 'adjustment') {
+      document.getElementById('m-title').textContent = `Adjust — ${it.name}`;
+      document.getElementById('m-sub').textContent = `Current balance: ${bal} ${unit}`;
+      document.getElementById('m-qty-label').textContent = `Adjustment (${unit})`;
+      document.getElementById('m-hint').textContent = 'Use negative for stock going out (spoilage, offline sale), positive for stock coming back.';
+      document.getElementById('m-note-wrap').style.display = 'block';
+    } else {
+      document.getElementById('m-title').textContent = `Physical Count — ${it.name}`;
+      document.getElementById('m-sub').textContent = `Book balance: ${bal} ${unit}`;
+      document.getElementById('m-qty-label').textContent = `Counted Quantity (${unit})`;
+      document.getElementById('m-hint').textContent = 'Enter what you physically counted. The variance will be posted automatically.';
+      document.getElementById('m-note-wrap').style.display = 'none';
+    }
+    document.getElementById('action-modal').classList.add('open');
+  }
+  function closeModal() { document.getElementById('action-modal').classList.remove('open'); }
+
+  async function submitAction() {
+    const id = document.getElementById('m-product').value;
+    const mode = document.getElementById('m-mode').value;
+    const qty = document.getElementById('m-qty').value;
+    const note = document.getElementById('m-note').value.trim();
+    const err = document.getElementById('m-err');
+    err.textContent = '';
+    if (qty === '' || isNaN(parseFloat(qty))) { err.textContent = 'Enter a valid quantity.'; return; }
+
+    try {
+      let res;
+      if (mode === 'stock_in') {
+        if (parseFloat(qty) <= 0) { err.textContent = 'Stock in must be greater than zero.'; return; }
+        res = await fetch(`${API}/admin/inventory/stock-in`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ product_id: id, qty: parseFloat(qty), note })
+        });
+      } else if (mode === 'adjustment') {
+        if (parseFloat(qty) === 0) { err.textContent = 'Adjustment cannot be zero.'; return; }
+        res = await fetch(`${API}/admin/inventory/adjustment`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ product_id: id, qty: parseFloat(qty), note })
+        });
+      } else {
+        if (parseFloat(qty) < 0) { err.textContent = 'Count cannot be negative.'; return; }
+        res = await fetch(`${API}/admin/inventory/count`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ product_id: id, counted_qty: parseFloat(qty) })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('m-ok').textContent =
+            data.variance === 0 ? 'No variance — book matches count.' :
+            `Variance of ${data.variance > 0 ? '+' : ''}${data.variance} posted.`;
+          setTimeout(() => { closeModal(); load(); }, 1400);
+          return;
+        }
+        throw new Error();
+      }
+      const data = await res.json();
+      if (data.success) { closeModal(); load(); }
+      else throw new Error();
+    } catch (e) { err.textContent = 'Failed to save. Try again.'; }
+  }
+
+  async function openHist(id) {
+    const it = items.find(x => x.id === id);
+    document.getElementById('h-title').textContent = `History — ${it.name}`;
+    document.getElementById('h-sub').textContent = `Current balance: ${fmtBal(it)} ${it.unit_label || 'kg'}`;
+    document.getElementById('hist-list').innerHTML = '<div class="empty-state">Loading…</div>';
+    document.getElementById('hist-modal').classList.add('open');
+    try {
+      const res = await fetch(`${API}/admin/inventory/movements/${id}`);
+      const moves = await res.json();
+      if (!moves.length) {
+        document.getElementById('hist-list').innerHTML = '<div class="empty-state">No movements yet.</div>';
+        return;
+      }
+      document.getElementById('hist-list').innerHTML = moves.map(m => {
+        const q = parseFloat(m.qty);
+        const d = new Date(m.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        const typeLabel = m.movement_type.replace('_', ' ');
+        return `
+        <div class="hist-row">
+          <div>
+            <span class="hist-type t-${m.movement_type}">${typeLabel}</span>
+            <div class="hist-note">${m.note || ''}${m.order_ref ? ` (${m.order_ref})` : ''}</div>
+            <div class="hist-date">${d}</div>
+          </div>
+          <div class="hist-qty ${q >= 0 ? 'pos' : 'neg'}">${q > 0 ? '+' : ''}${q}</div>
+        </div>`;
+      }).join('');
+    } catch (e) {
+      document.getElementById('hist-list').innerHTML = '<div class="empty-state">Failed to load history.</div>';
+    }
+  }
+  function closeHist() { document.getElementById('hist-modal').classList.remove('open'); }
+
+  checkAuth();
+</script>
+</body>
+</html>

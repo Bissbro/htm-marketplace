@@ -4,29 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Confirmed — HTM Marketplace</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --navy: #0A2540;
-      --gold: #B8975A;
-      --teal: #40B5AD;
-      --warm-white: #FAFAF8;
-      --charcoal: #1C1C1E;
-      --light: #F0F0EF;
-      --mid: #8E8E93;
+      --navy: #0A2540; --gold: #B8975A; --teal: #40B5AD;
+      --warm-white: #FAFAF8; --charcoal: #1C1C1E; --light: #ECECEA; --mid: #8E8E93;
     }
     body { font-family: 'Inter', sans-serif; background: var(--warm-white); color: var(--charcoal); min-height: 100vh; display: flex; flex-direction: column; }
 
     header {
       background: var(--navy);
-      padding: 0 1.25rem;
-      height: 60px;
+      height: 58px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .logo-text { color: white; font-family: 'Playfair Display', serif; font-size: 1.05rem; }
+    .logo-text { color: white; font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; }
     .logo-text span { color: var(--gold); }
 
     .page {
@@ -35,7 +29,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2.5rem 1.25rem;
+      padding: 2.4rem 1.1rem;
       text-align: center;
       max-width: 480px;
       margin: 0 auto;
@@ -43,102 +37,72 @@
     }
 
     .success-circle {
-      width: 90px;
-      height: 90px;
-      background: linear-gradient(135deg, var(--teal), #2da899);
+      width: 84px; height: 84px;
+      background: linear-gradient(140deg, var(--teal), #2DA899);
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      margin-bottom: 1.75rem;
-      box-shadow: 0 8px 24px rgba(64,181,173,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.6rem;
+      box-shadow: 0 8px 24px rgba(64,181,173,0.28);
       animation: pop 0.4s ease-out;
     }
+    .success-circle svg { width: 38px; height: 38px; color: white; }
     @keyframes pop {
       0% { transform: scale(0); opacity: 0; }
-      70% { transform: scale(1.1); }
+      70% { transform: scale(1.08); }
       100% { transform: scale(1); opacity: 1; }
     }
+    @media (prefers-reduced-motion: reduce) { .success-circle { animation: none; } }
 
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      color: var(--navy);
-      margin-bottom: 0.5rem;
-    }
-    .subtitle {
-      color: var(--mid);
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-      line-height: 1.5;
-    }
+    h1 { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700; color: var(--navy); margin-bottom: 0.45rem; }
+    .subtitle { color: var(--mid); font-size: 0.88rem; margin-bottom: 1.9rem; line-height: 1.55; }
 
-    .order-ref-box {
+    .ref-box {
       background: white;
       border: 1px solid var(--light);
       border-radius: 12px;
-      padding: 1.25rem 2rem;
-      margin-bottom: 1.75rem;
+      padding: 1.15rem 2rem;
+      margin-bottom: 1.6rem;
       width: 100%;
-      box-shadow: 0 1px 4px rgba(10,37,64,0.06);
+      box-shadow: 0 1px 3px rgba(10,37,64,0.05);
     }
-    .ref-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mid); margin-bottom: 0.4rem; }
-    .ref-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      color: var(--navy);
-      letter-spacing: 0.05em;
-    }
+    .ref-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mid); font-weight: 700; margin-bottom: 0.35rem; }
+    .ref-value { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 700; color: var(--navy); letter-spacing: 0.04em; }
 
     .steps {
       background: white;
       border-radius: 12px;
-      padding: 1.25rem;
+      padding: 1.15rem;
       width: 100%;
       text-align: left;
-      box-shadow: 0 1px 4px rgba(10,37,64,0.06);
+      box-shadow: 0 1px 3px rgba(10,37,64,0.05);
       border: 1px solid var(--light);
-      margin-bottom: 2rem;
+      margin-bottom: 1.9rem;
     }
-    .steps-title { font-weight: 600; font-size: 0.85rem; color: var(--navy); margin-bottom: 1rem; }
-    .step {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      margin-bottom: 0.85rem;
-    }
+    .steps-title { font-weight: 700; font-size: 0.84rem; color: var(--navy); margin-bottom: 0.95rem; }
+    .step { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.8rem; }
     .step:last-child { margin-bottom: 0; }
     .step-num {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--navy);
-      color: white;
-      font-size: 0.7rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 0.1rem;
+      width: 23px; height: 23px; border-radius: 50%;
+      background: var(--navy); color: white;
+      font-size: 0.68rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 0.1rem;
     }
-    .step-text { font-size: 0.83rem; color: var(--charcoal); line-height: 1.4; }
+    .step-text { font-size: 0.82rem; color: var(--charcoal); line-height: 1.45; }
     .step-text strong { color: var(--navy); }
 
-    .shop-again-btn {
+    .shop-btn {
       background: var(--navy);
       color: white;
       text-decoration: none;
       border-radius: 10px;
       padding: 0.85rem 2rem;
-      font-family: 'Inter', sans-serif;
       font-size: 0.9rem;
-      font-weight: 600;
+      font-weight: 700;
       display: inline-block;
       transition: opacity 0.2s;
     }
-    .shop-again-btn:hover { opacity: 0.85; }
+    .shop-btn:hover { opacity: 0.88; }
   </style>
 </head>
 <body>
@@ -147,32 +111,34 @@
 </header>
 
 <div class="page">
-  <div class="success-circle">✓</div>
-  <h1>Order Placed!</h1>
-  <p class="subtitle">Your order has been received. We'll confirm once the payment is verified.</p>
+  <div class="success-circle">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <h1>Order Placed</h1>
+  <p class="subtitle">Your order has been received. We will confirm it once your payment is verified.</p>
 
-  <div class="order-ref-box">
+  <div class="ref-box">
     <div class="ref-label">Order Reference</div>
     <div class="ref-value" id="order-ref">—</div>
   </div>
 
   <div class="steps">
-    <div class="steps-title">What happens next?</div>
+    <div class="steps-title">What happens next</div>
     <div class="step">
       <div class="step-num">1</div>
-      <div class="step-text"><strong>Payment verification</strong> — We'll confirm your transfer slip and send you a message.</div>
+      <div class="step-text"><strong>Payment verification</strong> — we check your transfer slip and confirm your order.</div>
     </div>
     <div class="step">
       <div class="step-num">2</div>
-      <div class="step-text"><strong>Packing</strong> — Your fish is fresh-packed and prepared for delivery.</div>
+      <div class="step-text"><strong>Packing</strong> — your items are freshly packed and prepared for delivery.</div>
     </div>
     <div class="step">
       <div class="step-num">3</div>
-      <div class="step-text"><strong>Delivery</strong> — We'll deliver to your door and call when we arrive.</div>
+      <div class="step-text"><strong>Delivery</strong> — we deliver to your door and call when we arrive.</div>
     </div>
   </div>
 
-  <a href="index.html" class="shop-again-btn">🐟 Order More Fish</a>
+  <a href="index.html" class="shop-btn">Continue Shopping</a>
 </div>
 
 <script>

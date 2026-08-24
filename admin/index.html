@@ -3,243 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin — Orders | HTM Marketplace</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Orders — HTM Marketplace Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --navy: #0A2540;
-      --gold: #B8975A;
-      --teal: #40B5AD;
-      --warm-white: #FAFAF8;
-      --charcoal: #1C1C1E;
-      --light: #F0F0EF;
-      --mid: #8E8E93;
+      --navy: #0A2540; --gold: #B8975A; --teal: #40B5AD;
+      --warm-white: #FAFAF8; --charcoal: #1C1C1E; --light: #ECECEA; --mid: #8E8E93; --danger: #C0392B;
     }
     body { font-family: 'Inter', sans-serif; background: var(--warm-white); color: var(--charcoal); }
+    button { font-family: 'Inter', sans-serif; }
 
-    /* AUTH GATE */
-    .auth-gate {
-      position: fixed; inset: 0;
-      background: var(--navy);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 999; flex-direction: column; padding: 2rem;
-    }
-    .auth-box {
-      background: white; border-radius: 16px; padding: 2rem; width: 100%; max-width: 320px; text-align: center;
-    }
-    .auth-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--navy); margin-bottom: 0.4rem; }
+    .auth-gate { position: fixed; inset: 0; background: var(--navy); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 2rem; }
+    .auth-box { background: white; border-radius: 14px; padding: 2rem; width: 100%; max-width: 320px; text-align: center; }
+    .auth-logo { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
     .auth-logo span { color: var(--gold); }
-    .auth-sub { font-size: 0.8rem; color: var(--mid); margin-bottom: 1.5rem; }
-    .auth-input {
-      width: 100%; border: 1.5px solid var(--light); border-radius: 8px;
-      padding: 0.7rem; font-size: 0.9rem; margin-bottom: 0.75rem;
-      font-family: 'Inter', sans-serif; text-align: center; letter-spacing: 0.1em;
-    }
+    .auth-sub { font-size: 0.78rem; color: var(--mid); margin-bottom: 1.4rem; }
+    .auth-input { width: 100%; border: 1.3px solid var(--light); border-radius: 9px; padding: 0.7rem; font-size: 0.9rem; margin-bottom: 0.7rem; font-family: 'Inter', sans-serif; text-align: center; letter-spacing: 0.08em; }
     .auth-input:focus { outline: none; border-color: var(--navy); }
-    .auth-btn {
-      width: 100%; background: var(--navy); color: white; border: none;
-      border-radius: 8px; padding: 0.75rem; font-family: 'Inter', sans-serif;
-      font-size: 0.9rem; font-weight: 600; cursor: pointer;
-    }
-    .auth-error { color: #D94F4F; font-size: 0.78rem; margin-top: 0.5rem; }
+    .auth-btn { width: 100%; background: var(--navy); color: white; border: none; border-radius: 9px; padding: 0.72rem; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+    .auth-error { color: var(--danger); font-size: 0.76rem; margin-top: 0.5rem; }
 
-    header {
-      background: var(--navy);
-      padding: 0 1.25rem;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .logo-text { color: white; font-family: 'Playfair Display', serif; font-size: 0.95rem; }
+    header { background: var(--navy); padding: 0 1.1rem; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .logo-text { color: white; font-family: 'Playfair Display', serif; font-size: 0.92rem; font-weight: 600; }
     .logo-text span { color: var(--gold); }
-    .logout-btn {
-      background: none; border: 1px solid rgba(255,255,255,0.3);
-      color: rgba(255,255,255,0.7); font-size: 0.75rem; padding: 0.3rem 0.7rem;
-      border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif;
-    }
+    .logout-btn { background: none; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.7); font-size: 0.72rem; padding: 0.32rem 0.7rem; border-radius: 7px; cursor: pointer; }
 
-    .admin-nav {
-      background: white;
-      border-bottom: 1px solid var(--light);
-      display: flex;
-      overflow-x: auto;
-    }
-    .nav-link {
-      padding: 0.75rem 1.25rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--mid);
-      text-decoration: none;
-      white-space: nowrap;
-      border-bottom: 2px solid transparent;
-      transition: color 0.15s;
-    }
+    .admin-nav { background: white; border-bottom: 1px solid var(--light); display: flex; overflow-x: auto; scrollbar-width: none; }
+    .admin-nav::-webkit-scrollbar { display: none; }
+    .nav-link { padding: 0.72rem 1rem; font-size: 0.8rem; font-weight: 600; color: var(--mid); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; }
     .nav-link.active { color: var(--navy); border-bottom-color: var(--navy); }
     .nav-link:hover { color: var(--navy); }
 
-    .page { padding: 1.25rem; max-width: 800px; margin: 0 auto; }
+    .page { padding: 1.15rem; max-width: 840px; margin: 0 auto; }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; }
 
-    /* STATUS FILTER */
-    .filter-row {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.25rem;
-      flex-wrap: wrap;
+    /* STATS */
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; margin-bottom: 1.2rem; }
+    @media (min-width: 640px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+    .stat {
+      background: white; border-radius: 11px; padding: 0.85rem 0.95rem;
+      border: 1px solid rgba(10,37,64,0.07); box-shadow: 0 1px 3px rgba(10,37,64,0.05);
     }
+    .stat-label { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mid); margin-bottom: 0.3rem; }
+    .stat-value { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--navy); }
+    .stat-value.warn { color: var(--danger); }
+
+    .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .filter-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .filter-btn {
-      padding: 0.4rem 0.9rem;
-      border-radius: 20px;
-      border: 1.5px solid var(--light);
-      background: white;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--mid);
-      transition: all 0.15s;
+      padding: 0.38rem 0.85rem; border-radius: 16px; border: 1.2px solid var(--light);
+      background: white; font-size: 0.75rem; font-weight: 600; cursor: pointer; color: var(--mid); transition: all 0.15s;
     }
     .filter-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+    .reload-btn {
+      background: white; border: 1.2px solid var(--light); border-radius: 8px;
+      padding: 0.45rem 0.9rem; font-size: 0.76rem; font-weight: 600; cursor: pointer; color: var(--charcoal);
+    }
 
-    /* ORDER CARDS */
     .order-card {
-      background: white;
-      border-radius: 12px;
-      margin-bottom: 0.85rem;
-      box-shadow: 0 1px 4px rgba(10,37,64,0.06);
-      border: 1px solid rgba(10,37,64,0.06);
-      overflow: hidden;
+      background: white; border-radius: 11px; margin-bottom: 0.75rem;
+      box-shadow: 0 1px 3px rgba(10,37,64,0.05); border: 1px solid rgba(10,37,64,0.07); overflow: hidden;
     }
-    .order-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.9rem 1rem;
-      cursor: pointer;
-    }
-    .order-ref { font-weight: 700; font-size: 0.85rem; color: var(--navy); }
-    .order-customer { font-size: 0.78rem; color: var(--mid); margin-top: 0.15rem; }
-    .order-meta { text-align: right; }
-    .order-amount { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--navy); }
-    .order-date { font-size: 0.72rem; color: var(--mid); margin-top: 0.15rem; }
+    .order-head { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; cursor: pointer; gap: 0.75rem; }
+    .order-ref { font-weight: 700; font-size: 0.84rem; color: var(--navy); }
+    .order-customer { font-size: 0.76rem; color: var(--mid); margin-top: 0.15rem; }
+    .order-meta { text-align: right; flex-shrink: 0; }
+    .order-amount { font-family: 'Playfair Display', serif; font-size: 0.98rem; font-weight: 700; color: var(--navy); }
+    .order-date { font-size: 0.7rem; color: var(--mid); margin-top: 0.15rem; }
 
     .status-badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 6px;
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 0.3rem;
+      display: inline-block; padding: 0.18rem 0.55rem; border-radius: 6px;
+      font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.3rem;
     }
-    .status-pending { background: #fff3cd; color: #856404; }
-    .status-confirmed { background: #d1f7e8; color: #0a6640; }
-    .status-delivered { background: #d0eaf8; color: #0a4d7a; }
-    .status-cancelled { background: #fde8e8; color: #8a1a1a; }
+    .status-pending { background: #FDF3D7; color: #7A5C04; }
+    .status-confirmed { background: #D9F5EA; color: #0A6640; }
+    .status-delivered { background: #DCEAF8; color: #0A4D7A; }
+    .status-cancelled { background: #FBE3E1; color: #8A241A; }
 
-    .order-body {
-      border-top: 1px solid var(--light);
-      padding: 0.9rem 1rem;
-      display: none;
-    }
+    .order-body { border-top: 1px solid var(--light); padding: 0.9rem 1rem; display: none; }
     .order-body.open { display: block; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; margin-bottom: 0.95rem; }
+    .detail-item .dlabel { font-size: 0.66rem; color: var(--mid); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+    .detail-item .dvalue { font-size: 0.84rem; color: var(--charcoal); font-weight: 500; margin-top: 0.15rem; }
 
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem 1rem;
-      margin-bottom: 1rem;
-    }
-    .detail-item .dlabel { font-size: 0.7rem; color: var(--mid); text-transform: uppercase; letter-spacing: 0.05em; }
-    .detail-item .dvalue { font-size: 0.85rem; color: var(--charcoal); font-weight: 500; margin-top: 0.15rem; }
-
-    .items-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-    .items-table th { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mid); text-align: left; padding: 0.4rem 0; border-bottom: 1px solid var(--light); }
-    .items-table td { font-size: 0.83rem; padding: 0.5rem 0; border-bottom: 1px solid var(--light); color: var(--charcoal); }
+    .items-table { width: 100%; border-collapse: collapse; margin-bottom: 0.95rem; }
+    .items-table th { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mid); text-align: left; padding: 0.35rem 0; border-bottom: 1px solid var(--light); font-weight: 700; }
+    .items-table td { font-size: 0.82rem; padding: 0.45rem 0; border-bottom: 1px solid var(--light); }
     .items-table tr:last-child td { border-bottom: none; }
 
     .slip-link {
-      display: inline-flex; align-items: center; gap: 0.35rem;
-      background: #f0f7ff; border: 1px solid #c8e0ff;
-      color: var(--navy); text-decoration: none;
-      padding: 0.45rem 0.85rem; border-radius: 7px;
-      font-size: 0.8rem; font-weight: 600;
-      margin-bottom: 1rem; transition: background 0.15s;
+      display: inline-block; background: #F2F7FB; border: 1px solid #DBE8F2;
+      color: var(--navy); text-decoration: none; padding: 0.45rem 0.85rem;
+      border-radius: 8px; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.95rem;
     }
-    .slip-link:hover { background: #d8ecff; }
+    .slip-link:hover { background: #E4EFF7; }
+    .no-slip { font-size: 0.76rem; color: var(--mid); margin-bottom: 0.85rem; }
 
-    .status-row {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
+    .status-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
     .status-btn {
-      padding: 0.45rem 0.9rem;
-      border-radius: 7px;
-      border: 1.5px solid var(--light);
-      background: white;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--charcoal);
-      transition: all 0.15s;
+      padding: 0.45rem 0.9rem; border-radius: 8px; border: 1.2px solid var(--light);
+      background: white; font-size: 0.76rem; font-weight: 700; cursor: pointer; color: var(--charcoal); transition: all 0.15s;
     }
-    .status-btn:hover { border-color: var(--navy); color: var(--navy); }
     .status-btn.confirm { background: var(--teal); color: white; border-color: var(--teal); }
     .status-btn.deliver { background: var(--navy); color: white; border-color: var(--navy); }
-    .status-btn.cancel { color: #D94F4F; border-color: #fde8e8; }
-    .status-btn.cancel:hover { background: #fde8e8; }
+    .status-btn.cancel { color: var(--danger); border-color: #F3D3D0; }
+    .status-btn.cancel:hover { background: #FBE3E1; }
 
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--mid);
-      font-size: 0.9rem;
-    }
-
-    .reload-btn {
-      display: flex; align-items: center; gap: 0.4rem;
-      background: white; border: 1.5px solid var(--light);
-      border-radius: 8px; padding: 0.5rem 1rem;
-      font-family: 'Inter', sans-serif; font-size: 0.8rem;
-      cursor: pointer; color: var(--charcoal);
-      margin-bottom: 1rem;
-    }
-    .page-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--navy); margin-bottom: 1rem; }
+    .empty-state { text-align: center; padding: 2.8rem 1rem; color: var(--mid); font-size: 0.86rem; }
   </style>
 </head>
 <body>
 
-<!-- AUTH GATE -->
 <div class="auth-gate" id="auth-gate">
   <div class="auth-box">
     <div class="auth-logo">HTM <span>Marketplace</span></div>
     <div class="auth-sub">Admin Access</div>
     <input class="auth-input" type="password" id="admin-pass" placeholder="Password" onkeydown="if(event.key==='Enter')login()">
-    <button class="auth-btn" onclick="login()">Enter</button>
+    <button class="auth-btn" onclick="login()">Sign In</button>
     <div class="auth-error" id="auth-error"></div>
   </div>
 </div>
 
 <div id="main-content" style="display:none">
   <header>
-    <span class="logo-text">HTM <span>Marketplace</span> Admin</span>
+    <span class="logo-text">HTM <span>Marketplace</span> · Admin</span>
     <button class="logout-btn" onclick="logout()">Logout</button>
   </header>
-
   <nav class="admin-nav">
-    <a href="index.html" class="nav-link active">📋 Orders</a>
-    <a href="products.html" class="nav-link">🐟 Products</a>
-    <a href="zones.html" class="nav-link">📍 Zones</a>
-    <a href="../index.html" class="nav-link">🛒 Shop</a>
+    <a href="index.html" class="nav-link active">Orders</a>
+    <a href="products.html" class="nav-link">Products</a>
+    <a href="inventory.html" class="nav-link">Inventory</a>
+    <a href="categories.html" class="nav-link">Categories</a>
+    <a href="zones.html" class="nav-link">Zones</a>
+    <a href="../index.html" class="nav-link">View Shop</a>
   </nav>
 
   <div class="page">
     <div class="page-title">Orders</div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Today's Orders</div><div class="stat-value" id="st-today">—</div></div>
+      <div class="stat"><div class="stat-label">Pending</div><div class="stat-value" id="st-pending">—</div></div>
+      <div class="stat"><div class="stat-label">Today's Revenue</div><div class="stat-value" id="st-revenue">—</div></div>
+      <div class="stat"><div class="stat-label">Out of Stock</div><div class="stat-value" id="st-oos">—</div></div>
+    </div>
+
+    <div class="toolbar">
       <div class="filter-row" id="filter-row">
         <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
         <button class="filter-btn" onclick="setFilter('pending', this)">Pending</button>
@@ -247,9 +157,10 @@
         <button class="filter-btn" onclick="setFilter('delivered', this)">Delivered</button>
         <button class="filter-btn" onclick="setFilter('cancelled', this)">Cancelled</button>
       </div>
-      <button class="reload-btn" onclick="loadOrders()">↻ Refresh</button>
+      <button class="reload-btn" onclick="loadAll()">Refresh</button>
     </div>
-    <div id="orders-list"><div class="empty-state">Loading orders...</div></div>
+
+    <div id="orders-list"><div class="empty-state">Loading orders…</div></div>
   </div>
 </div>
 
@@ -260,46 +171,37 @@
   let currentFilter = 'all';
 
   function login() {
-    const pass = document.getElementById('admin-pass').value;
-    if (pass === ADMIN_PASS) {
+    if (document.getElementById('admin-pass').value === ADMIN_PASS) {
       sessionStorage.setItem('mkt_admin', 'true');
-      document.getElementById('auth-gate').style.display = 'none';
-      document.getElementById('main-content').style.display = 'block';
-      loadOrders();
+      showMain();
     } else {
       document.getElementById('auth-error').textContent = 'Incorrect password';
     }
   }
-
-  function logout() {
-    sessionStorage.removeItem('mkt_admin');
-    location.reload();
+  function logout() { sessionStorage.removeItem('mkt_admin'); location.reload(); }
+  function showMain() {
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    loadAll();
   }
+  function checkAuth() { if (sessionStorage.getItem('mkt_admin') === 'true') showMain(); }
 
-  function checkAuth() {
-    if (sessionStorage.getItem('mkt_admin') === 'true') {
-      document.getElementById('auth-gate').style.display = 'none';
-      document.getElementById('main-content').style.display = 'block';
-      loadOrders();
-    }
-  }
-
-  function setFilter(filter, btn) {
-    currentFilter = filter;
+  function setFilter(f, btn) {
+    currentFilter = f;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     renderOrders();
   }
 
-  function formatDate(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-MV', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  function formatDate(d) {
+    return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  }
+  function isToday(d) {
+    const a = new Date(d), b = new Date();
+    return a.getDate() === b.getDate() && a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear();
   }
 
-  function toggleOrder(id) {
-    const body = document.getElementById(`body-${id}`);
-    body.classList.toggle('open');
-  }
+  function toggleOrder(id) { document.getElementById(`body-${id}`).classList.toggle('open'); }
 
   async function updateStatus(id, status) {
     try {
@@ -308,38 +210,42 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
       });
-      await loadOrders();
-    } catch (err) {
-      alert('Failed to update status');
-    }
+      loadAll();
+    } catch (err) { alert('Failed to update status'); }
+  }
+
+  function qtyDisplay(i) {
+    const q = parseFloat(i.qty_kg);
+    const label = i.unit_label || 'kg';
+    return (label === 'kg' ? q.toFixed(1) : String(Math.round(q))) + ' ' + label;
   }
 
   function renderOrders() {
     const list = document.getElementById('orders-list');
     const filtered = currentFilter === 'all' ? allOrders : allOrders.filter(o => o.status === currentFilter);
     if (!filtered.length) {
-      list.innerHTML = `<div class="empty-state">No ${currentFilter === 'all' ? '' : currentFilter + ' '}orders found.</div>`;
+      list.innerHTML = `<div class="empty-state">No ${currentFilter === 'all' ? '' : currentFilter + ' '}orders.</div>`;
       return;
     }
     list.innerHTML = filtered.map(o => {
-      const statusBtns = [];
-      if (o.status !== 'confirmed' && o.status !== 'delivered' && o.status !== 'cancelled')
-        statusBtns.push(`<button class="status-btn confirm" onclick="updateStatus(${o.id},'confirmed')">✓ Confirm</button>`);
+      const btns = [];
+      if (o.status === 'pending')
+        btns.push(`<button class="status-btn confirm" onclick="updateStatus(${o.id},'confirmed')">Confirm Payment</button>`);
       if (o.status === 'confirmed')
-        statusBtns.push(`<button class="status-btn deliver" onclick="updateStatus(${o.id},'delivered')">🚚 Mark Delivered</button>`);
-      if (o.status !== 'delivered' && o.status !== 'cancelled')
-        statusBtns.push(`<button class="status-btn cancel" onclick="if(confirm('Cancel this order?'))updateStatus(${o.id},'cancelled')">✕ Cancel</button>`);
+        btns.push(`<button class="status-btn deliver" onclick="updateStatus(${o.id},'delivered')">Mark Delivered</button>`);
+      if (o.status === 'pending' || o.status === 'confirmed')
+        btns.push(`<button class="status-btn cancel" onclick="if(confirm('Cancel this order? Stock will be restored if already deducted.'))updateStatus(${o.id},'cancelled')">Cancel</button>`);
 
-      const itemsRows = (o.items||[]).map(i =>
-        `<tr><td>${i.product_name}</td><td>${parseFloat(i.qty_kg).toFixed(1)} kg</td><td>MVR ${parseFloat(i.price_per_kg).toFixed(2)}/kg</td><td>MVR ${parseFloat(i.subtotal).toFixed(2)}</td></tr>`
+      const rows = (o.items || []).map(i =>
+        `<tr><td>${i.product_name}</td><td>${qtyDisplay(i)}</td><td>MVR ${parseFloat(i.subtotal).toFixed(2)}</td></tr>`
       ).join('');
 
-      const slipHtml = o.slip_url
-        ? `<a class="slip-link" href="https://api.htmrentals.com${o.slip_url}" target="_blank">📎 View Payment Slip</a><br>`
-        : '<div style="font-size:0.78rem;color:var(--mid);margin-bottom:0.75rem">No slip uploaded</div>';
+      const slip = o.slip_url
+        ? `<a class="slip-link" href="https://api.htmrentals.com${o.slip_url}" target="_blank" rel="noopener">View Payment Slip</a>`
+        : `<div class="no-slip">No slip uploaded</div>`;
 
       return `
-      <div class="order-card" id="card-${o.id}">
+      <div class="order-card">
         <div class="order-head" onclick="toggleOrder(${o.id})">
           <div>
             <div class="order-ref">${o.order_ref}</div>
@@ -358,20 +264,38 @@
             ${o.notes ? `<div class="detail-item" style="grid-column:1/-1"><div class="dlabel">Notes</div><div class="dvalue">${o.notes}</div></div>` : ''}
           </div>
           <table class="items-table">
-            <thead><tr><th>Fish</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr></thead>
-            <tbody>${itemsRows}</tbody>
+            <thead><tr><th>Item</th><th>Qty</th><th>Subtotal</th></tr></thead>
+            <tbody>${rows}</tbody>
           </table>
-          ${slipHtml}
-          <div class="status-row">${statusBtns.join('')}</div>
+          ${slip}
+          <div class="status-row">${btns.join('')}</div>
         </div>
       </div>`;
     }).join('');
   }
 
-  async function loadOrders() {
+  function renderStats(balances) {
+    const today = allOrders.filter(o => isToday(o.created_at) && o.status !== 'cancelled');
+    const pending = allOrders.filter(o => o.status === 'pending');
+    const revenue = today.reduce((s, o) => s + parseFloat(o.total_amount), 0);
+    const oos = balances.filter(b => parseFloat(b.stock_balance) <= 0).length;
+    document.getElementById('st-today').textContent = today.length;
+    document.getElementById('st-pending').textContent = pending.length;
+    document.getElementById('st-revenue').textContent = 'MVR ' + revenue.toFixed(0);
+    const oosEl = document.getElementById('st-oos');
+    oosEl.textContent = oos;
+    oosEl.classList.toggle('warn', oos > 0);
+  }
+
+  async function loadAll() {
     try {
-      const res = await fetch(`${API}/admin/orders`);
-      allOrders = await res.json();
+      const [ordersRes, balRes] = await Promise.all([
+        fetch(`${API}/admin/orders`),
+        fetch(`${API}/admin/inventory/balances`)
+      ]);
+      allOrders = await ordersRes.json();
+      const balances = await balRes.json();
+      renderStats(balances);
       renderOrders();
     } catch (err) {
       document.getElementById('orders-list').innerHTML = '<div class="empty-state">Failed to load orders.</div>';
