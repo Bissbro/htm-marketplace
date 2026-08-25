@@ -105,6 +105,20 @@
     .btn-save { flex: 2; background: var(--navy); color: white; border: none; border-radius: 8px; padding: 0.65rem; font-size: 0.84rem; font-weight: 700; cursor: pointer; }
 
     .empty-state { text-align: center; padding: 2.4rem 1rem; color: var(--mid); font-size: 0.86rem; }
+
+    .upload-btn {
+      background: white; border: 1.3px solid var(--navy); color: var(--navy);
+      border-radius: 8px; padding: 0.5rem 0.95rem; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+      flex-shrink: 0;
+    }
+    .upload-btn:hover { background: var(--navy); color: white; }
+    .upload-status { font-size: 0.74rem; color: var(--mid); }
+    .upload-status.ok { color: var(--teal); font-weight: 700; }
+    .upload-status.err { color: var(--danger); font-weight: 600; }
+    .img-preview {
+      margin-top: 0.6rem; width: 90px; height: 90px; object-fit: cover;
+      border-radius: 9px; border: 1px solid var(--light);
+    }
   </style>
 </head>
 <body>
@@ -168,8 +182,14 @@
           <input type="number" id="n-price" placeholder="0.00" min="0" step="0.5">
         </div>
         <div class="fg full">
-          <label>Image URL <span class="opt">(optional)</span></label>
-          <input type="text" id="n-image" placeholder="https://…">
+          <label>Product Photo <span class="opt">(optional)</span></label>
+          <div style="display:flex; gap:0.6rem; align-items:center;">
+            <button type="button" class="upload-btn" onclick="document.getElementById('n-file').click()">Choose Photo</button>
+            <span class="upload-status" id="n-img-status">No photo</span>
+          </div>
+          <input type="file" id="n-file" accept="image/*" style="display:none" onchange="uploadImage(this, 'n')">
+          <input type="hidden" id="n-image">
+          <img id="n-preview" class="img-preview" style="display:none">
         </div>
         <div class="fg full">
           <label>Description <span class="opt">(optional)</span></label>
@@ -202,7 +222,16 @@
       </div>
       <div class="fg"><label>Unit Label</label><input type="text" id="e-unit-label"></div>
       <div class="fg"><label>Price (MVR)</label><input type="number" id="e-price" min="0" step="0.5"></div>
-      <div class="fg full"><label>Image URL</label><input type="text" id="e-image"></div>
+      <div class="fg full">
+        <label>Product Photo</label>
+        <div style="display:flex; gap:0.6rem; align-items:center;">
+          <button type="button" class="upload-btn" onclick="document.getElementById('e-file').click()">Choose Photo</button>
+          <span class="upload-status" id="e-img-status">No photo</span>
+        </div>
+        <input type="file" id="e-file" accept="image/*" style="display:none" onchange="uploadImage(this, 'e')">
+        <input type="hidden" id="e-image">
+        <img id="e-preview" class="img-preview" style="display:none">
+      </div>
       <div class="fg full"><label>Description</label><textarea id="e-desc"></textarea></div>
     </div>
     <div class="modal-btns">
@@ -234,6 +263,37 @@
     load();
   }
   function checkAuth() { if (sessionStorage.getItem('mkt_admin') === 'true') showMain(); }
+
+  function setImage(prefix, url) {
+    document.getElementById(`${prefix}-image`).value = url || '';
+    const preview = document.getElementById(`${prefix}-preview`);
+    const status = document.getElementById(`${prefix}-img-status`);
+    if (url) {
+      preview.src = url; preview.style.display = 'block';
+      status.textContent = 'Photo set'; status.className = 'upload-status ok';
+    } else {
+      preview.style.display = 'none';
+      status.textContent = 'No photo'; status.className = 'upload-status';
+    }
+  }
+
+  async function uploadImage(input, prefix) {
+    const file = input.files[0];
+    if (!file) return;
+    const status = document.getElementById(`${prefix}-img-status`);
+    status.textContent = 'Uploading…'; status.className = 'upload-status';
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await fetch(`${API}/admin/upload-image`, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.success) setImage(prefix, data.url);
+      else throw new Error();
+    } catch (e) {
+      status.textContent = 'Upload failed — try a smaller image'; status.className = 'upload-status err';
+    }
+    input.value = '';
+  }
 
   function syncUnitLabel(prefix) {
     const type = document.getElementById(`${prefix}-unit-type`).value;
@@ -286,7 +346,8 @@
       });
       const data = await res.json();
       if (data.success) {
-        ['n-name','n-name2','n-price','n-image','n-desc'].forEach(id => document.getElementById(id).value = '');
+        ['n-name','n-name2','n-price','n-desc'].forEach(id => document.getElementById(id).value = '');
+        setImage('n', '');
         document.getElementById('add-ok').textContent = 'Product added. Remember to add stock in Inventory.';
         setTimeout(() => { document.getElementById('add-ok').textContent = ''; }, 4000);
         load();
@@ -318,7 +379,7 @@
     document.getElementById('e-unit-type').value = p.unit_type || 'kg';
     document.getElementById('e-unit-label').value = p.unit_label || 'kg';
     document.getElementById('e-price').value = p.price_per_kg;
-    document.getElementById('e-image').value = p.image_url || '';
+    setImage('e', p.image_url || '');
     document.getElementById('e-desc').value = p.description || '';
     document.getElementById('e-err').textContent = '';
     document.getElementById('edit-modal').classList.add('open');
