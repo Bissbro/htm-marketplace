@@ -136,6 +136,7 @@
     <a href="inventory.html" class="nav-link">Inventory</a>
     <a href="categories.html" class="nav-link">Categories</a>
     <a href="zones.html" class="nav-link">Zones</a>
+    <a href="settings.html" class="nav-link">Settings</a>
     <a href="../index.html" class="nav-link">View Shop</a>
   </nav>
 
@@ -203,6 +204,20 @@
 
   function toggleOrder(id) { document.getElementById(`body-${id}`).classList.toggle('open'); }
 
+  async function postponeOrder(id) {
+    const reason = prompt('Postpone reason (communicated to customer already):');
+    if (reason === null) return;
+    if (!reason.trim()) { alert('A reason is required.'); return; }
+    try {
+      await fetch(`${API}/admin/orders/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postpone_note: reason.trim() })
+      });
+      loadAll();
+    } catch (err) { alert('Failed to postpone'); }
+  }
+
   async function updateStatus(id, status) {
     try {
       await fetch(`${API}/admin/orders/${id}`, {
@@ -231,8 +246,10 @@
       const btns = [];
       if (o.status === 'pending')
         btns.push(`<button class="status-btn confirm" onclick="updateStatus(${o.id},'confirmed')">Confirm Payment</button>`);
-      if (o.status === 'confirmed')
+      if (o.status === 'confirmed') {
         btns.push(`<button class="status-btn deliver" onclick="updateStatus(${o.id},'delivered')">Mark Delivered</button>`);
+        btns.push(`<button class="status-btn" onclick="postponeOrder(${o.id})">Postpone</button>`);
+      }
       if (o.status === 'pending' || o.status === 'confirmed')
         btns.push(`<button class="status-btn cancel" onclick="if(confirm('Cancel this order? Stock will be restored if already deducted.'))updateStatus(${o.id},'cancelled')">Cancel</button>`);
 
@@ -251,6 +268,8 @@
             <div class="order-ref">${o.order_ref}</div>
             <div class="order-customer">${o.customer_name} · ${o.customer_phone}</div>
             <span class="status-badge status-${o.status}">${o.status}</span>
+            ${o.is_next_day ? `<span class="status-badge" style="background:#EFE5F7;color:#5B2D82">Next Day</span>` : ''}
+            ${o.postpone_note ? `<span class="status-badge" style="background:#FDF3D7;color:#7A5C04">Postponed</span>` : ''}
           </div>
           <div class="order-meta">
             <div class="order-amount">MVR ${parseFloat(o.total_amount).toFixed(2)}</div>
@@ -262,6 +281,8 @@
             <div class="detail-item"><div class="dlabel">Building</div><div class="dvalue">${o.zone_name}</div></div>
             <div class="detail-item"><div class="dlabel">Apartment</div><div class="dvalue">${o.apartment_no}</div></div>
             ${o.notes ? `<div class="detail-item" style="grid-column:1/-1"><div class="dlabel">Notes</div><div class="dvalue">${o.notes}</div></div>` : ''}
+            ${parseFloat(o.delivery_fee) > 0 ? `<div class="detail-item"><div class="dlabel">Delivery Fee</div><div class="dvalue">MVR ${parseFloat(o.delivery_fee).toFixed(2)}</div></div>` : `<div class="detail-item"><div class="dlabel">Delivery</div><div class="dvalue">Free</div></div>`}
+            ${o.postpone_note ? `<div class="detail-item" style="grid-column:1/-1"><div class="dlabel">Postponed</div><div class="dvalue">${o.postpone_note}</div></div>` : ''}
           </div>
           <table class="items-table">
             <thead><tr><th>Item</th><th>Qty</th><th>Subtotal</th></tr></thead>

@@ -408,23 +408,10 @@
 
 <section class="hero">
   <div class="hero-inner">
-    <div class="hero-eyebrow">Hulhumale' Phase 2 · Free Delivery</div>
+    <div class="hero-eyebrow">Hulhumale' Phase 2 · Groceries &amp; Fresh Produce</div>
     <h1>The Taste of the Maldives, <em>Delivered to Your Door</em></h1>
-    <p>Fresh fish, seafood, asaara and local favourites — cleaned, packed with care, and brought straight to your building.</p>
-    <div class="hero-points">
-      <div class="hero-point">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Free delivery
-      </div>
-      <div class="hero-point">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Fresh daily
-      </div>
-      <div class="hero-point">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Vacuum packed
-      </div>
-    </div>
+    <p>Your neighbourhood grocer online — fresh fish, asaara, condiments and Maldivian favourites, delivered to your building.</p>
+    <div class="hero-points" id="hero-points"></div>
   </div>
 </section>
 
@@ -433,6 +420,8 @@
     <button class="tab active" data-cat="all">All</button>
   </div>
 </div>
+
+<div id="closed-banner" style="display:none; background:#FDF3D7; color:#7A5C04; font-size:0.8rem; font-weight:600; padding:0.7rem 1.1rem; text-align:center; line-height:1.45;"></div>
 
 <main class="catalog" id="catalog">
   <div class="state" id="loading-state">Loading products…</div>
@@ -633,14 +622,44 @@
     });
   }
 
+  function fmtTime(t) {
+    const [h, m] = t.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return m === 0 ? `${h12} ${ampm}` : `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+  }
+
+  const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+  function renderSettings(s) {
+    const points = [];
+    if (s.free_delivery_threshold > 0) points.push(`Free delivery above MVR ${s.free_delivery_threshold}`);
+    points.push('Same-day delivery');
+    points.push(`Open ${fmtTime(s.open_time)} – ${fmtTime(s.close_time)}`);
+    document.getElementById('hero-points').innerHTML =
+      points.map(p => `<div class="hero-point">${CHECK} ${p}</div>`).join('');
+
+    const banner = document.getElementById('closed-banner');
+    if (!s.shop_open) {
+      if (s.closed_mode === 'block') {
+        banner.textContent = `We're closed right now — orders open at ${fmtTime(s.open_time)}.`;
+      } else {
+        banner.textContent = `We're closed for today — orders placed now will be delivered tomorrow.`;
+      }
+      banner.style.display = 'block';
+    }
+  }
+
   async function load() {
     try {
-      const [catRes, prodRes] = await Promise.all([
+      const [catRes, prodRes, setRes] = await Promise.all([
         fetch(`${API}/categories`),
-        fetch(`${API}/products`)
+        fetch(`${API}/products`),
+        fetch(`${API}/settings`)
       ]);
       categories = await catRes.json();
       products = await prodRes.json();
+      renderSettings(await setRes.json());
       renderTabs();
       render();
     } catch (err) {

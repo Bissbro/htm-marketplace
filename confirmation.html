@@ -148,6 +148,10 @@
     document.getElementById('order-ref').textContent = ref;
     document.title = `Order ${ref} — HTM Marketplace`;
   }
+  if (params.get('nd') === '1') {
+    const sub = document.querySelector('.subtitle');
+    sub.innerHTML = 'Your order has been received after closing hours — it will be <strong>delivered tomorrow</strong>. We will confirm it once your payment is verified.';
+  }
 </script>
 </body>
 </html>

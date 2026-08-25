@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — HTM Marketplace Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0A2540; --gold: #B8975A; --teal: #40B5AD;
+      --warm-white: #FAFAF8; --charcoal: #1C1C1E; --light: #ECECEA; --mid: #8E8E93; --danger: #C0392B;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--warm-white); color: var(--charcoal); }
+    button { font-family: 'Inter', sans-serif; }
+
+    .auth-gate { position: fixed; inset: 0; background: var(--navy); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 2rem; }
+    .auth-box { background: white; border-radius: 14px; padding: 2rem; width: 100%; max-width: 320px; text-align: center; }
+    .auth-logo { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+    .auth-logo span { color: var(--gold); }
+    .auth-sub { font-size: 0.78rem; color: var(--mid); margin-bottom: 1.4rem; }
+    .auth-input { width: 100%; border: 1.3px solid var(--light); border-radius: 9px; padding: 0.7rem; font-size: 0.9rem; margin-bottom: 0.7rem; font-family: 'Inter', sans-serif; text-align: center; letter-spacing: 0.08em; }
+    .auth-input:focus { outline: none; border-color: var(--navy); }
+    .auth-btn { width: 100%; background: var(--navy); color: white; border: none; border-radius: 9px; padding: 0.72rem; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+    .auth-error { color: var(--danger); font-size: 0.76rem; margin-top: 0.5rem; }
+
+    header { background: var(--navy); padding: 0 1.1rem; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .logo-text { color: white; font-family: 'Playfair Display', serif; font-size: 0.92rem; font-weight: 600; }
+    .logo-text span { color: var(--gold); }
+    .logout-btn { background: none; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.7); font-size: 0.72rem; padding: 0.32rem 0.7rem; border-radius: 7px; cursor: pointer; }
+
+    .admin-nav { background: white; border-bottom: 1px solid var(--light); display: flex; overflow-x: auto; scrollbar-width: none; }
+    .admin-nav::-webkit-scrollbar { display: none; }
+    .nav-link { padding: 0.72rem 1rem; font-size: 0.8rem; font-weight: 600; color: var(--mid); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; }
+    .nav-link.active { color: var(--navy); border-bottom-color: var(--navy); }
+    .nav-link:hover { color: var(--navy); }
+
+    .page { padding: 1.15rem; max-width: 560px; margin: 0 auto; }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.35rem; }
+    .page-sub { font-size: 0.78rem; color: var(--mid); margin-bottom: 1.1rem; line-height: 1.5; }
+
+    .panel {
+      background: white; border-radius: 11px; padding: 1.15rem;
+      margin-bottom: 1rem; border: 1px solid rgba(10,37,64,0.07); box-shadow: 0 1px 3px rgba(10,37,64,0.05);
+    }
+    .panel-title { font-weight: 700; font-size: 0.86rem; color: var(--navy); margin-bottom: 0.95rem; padding-bottom: 0.7rem; border-bottom: 1px solid var(--light); }
+
+    .fg { margin-bottom: 0.95rem; }
+    .fg:last-child { margin-bottom: 0; }
+    label { display: block; font-size: 0.68rem; font-weight: 700; color: var(--navy); margin-bottom: 0.32rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    input, select {
+      width: 100%; border: 1.3px solid var(--light); border-radius: 8px;
+      padding: 0.62rem 0.8rem; font-family: 'Inter', sans-serif; font-size: 0.9rem;
+      color: var(--charcoal); background: var(--warm-white);
+    }
+    input:focus, select:focus { outline: none; border-color: var(--navy); background: white; }
+    select { -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.8rem center; padding-right: 2.4rem; }
+    .hint { font-size: 0.72rem; color: var(--mid); margin-top: 0.35rem; line-height: 1.45; }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+    .shop-status {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.8rem; font-weight: 700; padding: 0.65rem 0.85rem;
+      border-radius: 9px; margin-bottom: 1rem;
+    }
+    .shop-status.open { background: #D9F5EA; color: #0A6640; }
+    .shop-status.closed { background: #FBE3E1; color: #8A241A; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    .btn-primary {
+      width: 100%; background: var(--navy); color: white; border: none; border-radius: 9px;
+      padding: 0.78rem; font-size: 0.9rem; font-weight: 700; cursor: pointer; margin-top: 0.3rem;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:disabled { opacity: 0.55; }
+    .msg-ok { color: var(--teal); font-size: 0.8rem; font-weight: 700; margin-top: 0.6rem; text-align: center; }
+    .msg-err { color: var(--danger); font-size: 0.8rem; margin-top: 0.6rem; text-align: center; }
+  </style>
+</head>
+<body>
+
+<div class="auth-gate" id="auth-gate">
+  <div class="auth-box">
+    <div class="auth-logo">HTM <span>Marketplace</span></div>
+    <div class="auth-sub">Admin Access</div>
+    <input class="auth-input" type="password" id="admin-pass" placeholder="Password" onkeydown="if(event.key==='Enter')login()">
+    <button class="auth-btn" onclick="login()">Sign In</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<div id="main-content" style="display:none">
+  <header>
+    <span class="logo-text">HTM <span>Marketplace</span> · Admin</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+  <nav class="admin-nav">
+    <a href="index.html" class="nav-link">Orders</a>
+    <a href="products.html" class="nav-link">Products</a>
+    <a href="inventory.html" class="nav-link">Inventory</a>
+    <a href="categories.html" class="nav-link">Categories</a>
+    <a href="zones.html" class="nav-link">Zones</a>
+    <a href="settings.html" class="nav-link active">Settings</a>
+    <a href="../index.html" class="nav-link">View Shop</a>
+  </nav>
+
+  <div class="page">
+    <div class="page-title">Settings</div>
+    <div class="page-sub">Changes take effect immediately on the storefront and checkout.</div>
+
+    <div class="shop-status" id="shop-status" style="display:none"></div>
+
+    <div class="panel">
+      <div class="panel-title">Delivery Pricing</div>
+      <div class="fg">
+        <label>Delivery Fee (MVR)</label>
+        <input type="number" id="s-fee" min="0" step="1">
+        <div class="hint">Charged on orders below the free delivery threshold.</div>
+      </div>
+      <div class="fg">
+        <label>Free Delivery Above (MVR)</label>
+        <input type="number" id="s-threshold" min="0" step="10">
+        <div class="hint">Orders at or above this subtotal get free delivery. Set 0 to always charge the fee.</div>
+      </div>
+      <div class="fg">
+        <label>Minimum Order Value (MVR)</label>
+        <input type="number" id="s-min" min="0" step="5">
+        <div class="hint">Orders below this subtotal cannot be placed.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Shop Hours</div>
+      <div class="row-2">
+        <div class="fg">
+          <label>Opens</label>
+          <input type="time" id="s-open">
+        </div>
+        <div class="fg">
+          <label>Closes</label>
+          <input type="time" id="s-close">
+        </div>
+      </div>
+      <div class="fg" style="margin-top:0.95rem">
+        <label>Outside Hours</label>
+        <select id="s-mode">
+          <option value="next_day">Accept orders for next-day delivery</option>
+          <option value="block">Block checkout until opening</option>
+        </select>
+        <div class="hint">Next-day orders arrive tagged "Next Day" in the Orders queue and are delivered the following day.</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="save-btn" onclick="save()">Save Settings</button>
+    <div class="msg-ok" id="msg-ok"></div>
+    <div class="msg-err" id="msg-err"></div>
+  </div>
+</div>
+
+<script>
+  const API = 'https://api.htmrentals.com/api/marketplace';
+  const ADMIN_PASS = 'HTMAdmin2026';
+
+  function login() {
+    if (document.getElementById('admin-pass').value === ADMIN_PASS) {
+      sessionStorage.setItem('mkt_admin', 'true');
+      showMain();
+    } else document.getElementById('auth-error').textContent = 'Incorrect password';
+  }
+  function logout() { sessionStorage.removeItem('mkt_admin'); location.reload(); }
+  function showMain() {
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    load();
+  }
+  function checkAuth() { if (sessionStorage.getItem('mkt_admin') === 'true') showMain(); }
+
+  async function load() {
+    try {
+      const [adminRes, pubRes] = await Promise.all([
+        fetch(`${API}/admin/settings`),
+        fetch(`${API}/settings`)
+      ]);
+      const s = await adminRes.json();
+      const pub = await pubRes.json();
+      document.getElementById('s-fee').value = s.delivery_fee || 0;
+      document.getElementById('s-threshold').value = s.free_delivery_threshold || 0;
+      document.getElementById('s-min').value = s.min_order_value || 0;
+      document.getElementById('s-open').value = s.open_time || '08:00';
+      document.getElementById('s-close').value = s.close_time || '22:00';
+      document.getElementById('s-mode').value = s.closed_mode || 'next_day';
+
+      const st = document.getElementById('shop-status');
+      st.style.display = 'flex';
+      if (pub.shop_open) {
+        st.className = 'shop-status open';
+        st.innerHTML = '<span class="dot"></span> Shop is OPEN right now (Maldives time)';
+      } else {
+        st.className = 'shop-status closed';
+        st.innerHTML = '<span class="dot"></span> Shop is CLOSED right now (Maldives time)';
+      }
+    } catch (e) {
+      document.getElementById('msg-err').textContent = 'Failed to load settings.';
+    }
+  }
+
+  async function save() {
+    const btn = document.getElementById('save-btn');
+    document.getElementById('msg-ok').textContent = '';
+    document.getElementById('msg-err').textContent = '';
+    btn.disabled = true;
+    try {
+      const res = await fetch(`${API}/admin/settings`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          delivery_fee: document.getElementById('s-fee').value || '0',
+          free_delivery_threshold: document.getElementById('s-threshold').value || '0',
+          min_order_value: document.getElementById('s-min').value || '0',
+          open_time: document.getElementById('s-open').value || '08:00',
+          close_time: document.getElementById('s-close').value || '22:00',
+          closed_mode: document.getElementById('s-mode').value
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('msg-ok').textContent = 'Settings saved.';
+        load();
+        setTimeout(() => { document.getElementById('msg-ok').textContent = ''; }, 3000);
+      } else throw new Error();
+    } catch (e) {
+      document.getElementById('msg-err').textContent = 'Failed to save settings.';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  checkAuth();
+</script>
+</body>
+</html>

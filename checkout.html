@@ -253,6 +253,22 @@
 <script>
   const API = 'https://api.htmrentals.com/api/marketplace';
   let cart = JSON.parse(localStorage.getItem('htm_cart') || '[]');
+  let settings = null;
+
+  function fmtTime(t) {
+    const [h, m] = t.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return m === 0 ? `${h12} ${ampm}` : `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+  }
+
+  async function loadSettings() {
+    try {
+      const res = await fetch(`${API}/settings`);
+      settings = await res.json();
+    } catch (e) { settings = null; }
+    renderOrderSummary();
+  }
 
   function qtyText(item) {
     const q = item.unit_type === 'kg' ? item.qty.toFixed(1) : String(Math.round(item.qty));
@@ -273,12 +289,11 @@
       btn.disabled = true;
       return;
     }
-    btn.disabled = false;
     let html = '';
-    let total = 0;
+    let subtotal = 0;
     cart.forEach((item, idx) => {
       const sub = item.qty * item.price_per_kg;
-      total += sub;
+      subtotal += sub;
       html += `
         <div class="order-item">
           <div>
@@ -292,12 +307,56 @@
           </div>
         </div>`;
     });
+
+    let total = subtotal;
+    let belowMin = false;
+    let closedBlocked = false;
+
+    if (settings) {
+      const fee = settings.delivery_fee || 0;
+      const threshold = settings.free_delivery_threshold || 0;
+      const minOrder = settings.min_order_value || 0;
+      const freeDelivery = threshold > 0 && subtotal >= threshold;
+      const appliedFee = freeDelivery ? 0 : fee;
+      total = subtotal + appliedFee;
+      belowMin = subtotal < minOrder;
+      closedBlocked = !settings.shop_open && settings.closed_mode === 'block';
+
+      html += `
+        <div style="display:flex; justify-content:space-between; padding-top:0.85rem; margin-top:0.3rem; border-top:1px solid var(--light); font-size:0.84rem;">
+          <span style="color:var(--mid)">Subtotal</span>
+          <span style="font-weight:600">MVR ${subtotal.toFixed(2)}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding-top:0.4rem; font-size:0.84rem;">
+          <span style="color:var(--mid)">Delivery</span>
+          ${freeDelivery
+            ? `<span style="font-weight:700; color:var(--teal)"><s style="color:var(--mid); font-weight:500; margin-right:0.35rem">MVR ${fee.toFixed(2)}</s>FREE</span>`
+            : `<span style="font-weight:600">MVR ${appliedFee.toFixed(2)}</span>`}
+        </div>`;
+
+      if (!freeDelivery && threshold > 0 && !belowMin) {
+        const gap = threshold - subtotal;
+        html += `<div style="font-size:0.74rem; color:#7A5C04; background:#FDF3D7; border-radius:7px; padding:0.5rem 0.7rem; margin-top:0.55rem;">Add MVR ${gap.toFixed(2)} more for free delivery.</div>`;
+      }
+      if (belowMin) {
+        const gap = minOrder - subtotal;
+        html += `<div style="font-size:0.76rem; color:#8A241A; background:#FBE3E1; border-radius:7px; padding:0.55rem 0.7rem; margin-top:0.55rem; font-weight:600;">Minimum order is MVR ${minOrder.toFixed(2)} — add MVR ${gap.toFixed(2)} more to place your order.</div>`;
+      }
+      if (closedBlocked) {
+        html += `<div style="font-size:0.76rem; color:#7A5C04; background:#FDF3D7; border-radius:7px; padding:0.55rem 0.7rem; margin-top:0.55rem; font-weight:600;">We're closed right now — orders open at ${fmtTime(settings.open_time)}.</div>`;
+      } else if (!settings.shop_open) {
+        html += `<div style="font-size:0.74rem; color:#7A5C04; background:#FDF3D7; border-radius:7px; padding:0.5rem 0.7rem; margin-top:0.55rem;">We're closed for today — this order will be delivered tomorrow.</div>`;
+      }
+    }
+
     html += `
       <div class="order-total">
         <span class="total-label">Total</span>
         <span class="total-amount">MVR ${total.toFixed(2)}</span>
       </div>`;
     container.innerHTML = html;
+    btn.disabled = belowMin || closedBlocked;
+    btn.textContent = belowMin ? 'Below Minimum Order' : (closedBlocked ? 'Shop Closed' : 'Place Order');
   }
 
   async function loadZones() {
@@ -375,7 +434,13 @@
 
       if (data.success) {
         localStorage.removeItem('htm_cart');
-        window.location.href = `confirmation.html?ref=${data.order_ref}`;
+        window.location.href = `confirmation.html?ref=${data.order_ref}${data.is_next_day ? '&nd=1' : ''}`;
+      } else if (data.message) {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.textContent = 'Place Order';
+        alert(data.message);
+        loadSettings();
       } else {
         throw new Error(data.error || 'Order failed');
       }
@@ -389,6 +454,7 @@
 
   renderOrderSummary();
   loadZones();
+  loadSettings();
 </script>
 </body>
 </html>
