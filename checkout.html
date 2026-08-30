@@ -178,14 +178,14 @@
 
     .err-msg { font-size: 0.73rem; color: var(--danger); margin-top: 0.3rem; font-weight: 500; }
     .form-note { font-size: 0.75rem; color: var(--mid); line-height: 1.5; }
-    .bank-card { display:flex; justify-content:space-between; align-items:center; gap:0.6rem; border:1px solid #e2e5e9; border-radius:12px; padding:0.85rem 1rem; margin-bottom:0.7rem; background:#fff; cursor:pointer; }
+    .bank-card { position:relative; display:block; border:1px solid #e2e5e9; border-radius:12px; padding:0.85rem 1rem; margin-bottom:0.7rem; background:#fff; cursor:pointer; }
     .bank-badge { display:inline-block; font-size:0.7rem; font-weight:700; padding:0.15rem 0.5rem; border-radius:6px; margin-bottom:0.3rem; }
     .bank-badge.bml { background:#fdecea; color:#c0392b; }
     .bank-badge.mib { background:#e8f6ef; color:#1e8e5a; }
     .bank-name { font-size:0.85rem; color:#556; }
     .bank-acct { font-size:clamp(0.85rem, 4.2vw, 1.05rem); white-space:nowrap; font-variant-numeric:tabular-nums; font-weight:700; color:#12263a; letter-spacing:0.02em; margin:0.1rem 0; }
     .bank-holder { font-size:0.8rem; color:#889; }
-    .copy-hint { color:#1e8e5a; font-weight:600; font-size:0.85rem; flex-shrink:0; }
+    .copy-hint { position:absolute; top:0.85rem; right:1rem; color:#1e8e5a; font-weight:600; font-size:0.8rem; }
     .copy-note { text-align:center; font-size:0.8rem; color:#98a2ad; margin:0.2rem 0 0.4rem; }
   </style>
 </head>
