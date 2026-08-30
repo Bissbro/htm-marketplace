@@ -212,9 +212,8 @@
     </div>
     <div class="form-group">
       <label>Building</label>
-      <select id="zone-select">
-        <option value="">Loading…</option>
-      </select>
+      <input type="text" id="zone-select" list="zone-list" placeholder="Start typing your building name..." autocomplete="off"><datalist id="zone-list">
+        </datalist>
       <div class="err-msg" id="err-zone"></div>
     </div>
     <div class="form-group">
@@ -365,7 +364,9 @@
       const zones = await res.json();
       const sel = document.getElementById('zone-select');
       sel.innerHTML = '<option value="">Select building</option>';
-      zones.forEach(z => { sel.innerHTML += `<option value="${z.id}">${z.name}</option>`; });
+      window._zones = zones;
+      sel.innerHTML = '';
+      zones.forEach(z => { sel.innerHTML += `<option value="${z.name}">`; });
     } catch (err) {
       document.getElementById('zone-select').innerHTML = '<option value="">Could not load buildings</option>';
     }
@@ -397,8 +398,10 @@
       else { el.classList.remove('error'); err.textContent = ''; }
     });
     const zone = document.getElementById('zone-select');
-    if (!zone.value) { zone.classList.add('error'); document.getElementById('err-zone').textContent = 'Please select your building'; ok = false; }
-    else { zone.classList.remove('error'); document.getElementById('err-zone').textContent = ''; }
+    const zoneMatch = (window._zones || []).find(z => z.name.toLowerCase() === zone.value.trim().toLowerCase());
+    if (!zone.value.trim()) { zone.classList.add('error'); document.getElementById('err-zone').textContent = 'Please enter your building'; ok = false; }
+    else if (!zoneMatch) { zone.classList.add('error'); document.getElementById('err-zone').textContent = 'Building not found — pick from the list or choose "Other - Phase 1/2"'; ok = false; }
+    else { zone.classList.remove('error'); document.getElementById('err-zone').textContent = ''; window._selectedZoneId = zoneMatch.id; }
     const slip = document.getElementById('slip-file');
     if (!slip.files[0]) { document.getElementById('err-slip').textContent = 'Please upload your payment slip'; ok = false; }
     else { document.getElementById('err-slip').textContent = ''; }
@@ -418,7 +421,7 @@
       const formData = new FormData();
       formData.append('customer_name', document.getElementById('customer-name').value.trim());
       formData.append('customer_phone', document.getElementById('customer-phone').value.trim());
-      formData.append('zone_id', document.getElementById('zone-select').value);
+      formData.append('zone_id', window._selectedZoneId);
       formData.append('apartment_no', document.getElementById('apartment-no').value.trim());
       formData.append('notes', document.getElementById('notes').value.trim());
       formData.append('items', JSON.stringify(cart.map(i => ({
