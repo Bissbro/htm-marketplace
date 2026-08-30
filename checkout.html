@@ -178,6 +178,15 @@
 
     .err-msg { font-size: 0.73rem; color: var(--danger); margin-top: 0.3rem; font-weight: 500; }
     .form-note { font-size: 0.75rem; color: var(--mid); line-height: 1.5; }
+    .bank-card { display:flex; justify-content:space-between; align-items:center; border:1px solid #e2e5e9; border-radius:12px; padding:0.85rem 1rem; margin-bottom:0.7rem; background:#fff; cursor:pointer; }
+    .bank-badge { display:inline-block; font-size:0.7rem; font-weight:700; padding:0.15rem 0.5rem; border-radius:6px; margin-bottom:0.3rem; }
+    .bank-badge.bml { background:#fdecea; color:#c0392b; }
+    .bank-badge.mib { background:#e8f6ef; color:#1e8e5a; }
+    .bank-name { font-size:0.85rem; color:#556; }
+    .bank-acct { font-size:1.15rem; font-weight:700; color:#12263a; letter-spacing:0.02em; margin:0.1rem 0; }
+    .bank-holder { font-size:0.8rem; color:#889; }
+    .copy-hint { color:#1e8e5a; font-weight:600; font-size:0.85rem; flex-shrink:0; }
+    .copy-note { text-align:center; font-size:0.8rem; color:#98a2ad; margin:0.2rem 0 0.4rem; }
   </style>
 </head>
 <body>
@@ -235,10 +244,26 @@
   <div class="section">
     <div class="section-head">Payment</div>
     <div class="payment-info">
-      <div class="payment-info-title">Transfer to BML Account</div>
-      <div class="payment-detail"><span class="lbl">Account Name</span><span class="val">HTM Marketplace</span></div>
-      <div class="payment-detail"><span class="lbl">Account No.</span><span class="val">7730000XXXXXX</span></div>
-      <div class="payment-detail"><span class="lbl">Bank</span><span class="val">Bank of Maldives</span></div>
+      <div class="payment-info-title">Transfer to any account below</div>
+      <div class="bank-card" onclick="copyAcct('7730000770586', this)">
+        <div class="bank-card-left">
+          <span class="bank-badge bml">BML</span>
+          <div class="bank-name">Bank of Maldives</div>
+          <div class="bank-acct">7730000770586</div>
+          <div class="bank-holder">Account Name: HTM</div>
+        </div>
+        <span class="copy-hint">Tap to copy</span>
+      </div>
+      <div class="bank-card" onclick="copyAcct('90501400052311000', this)">
+        <div class="bank-card-left">
+          <span class="bank-badge mib">MIB</span>
+          <div class="bank-name">Maldives Islamic Bank</div>
+          <div class="bank-acct">90501400052311000</div>
+          <div class="bank-holder">Account Name: HTM</div>
+        </div>
+        <span class="copy-hint">Tap to copy</span>
+      </div>
+      <div class="copy-note">Tap any account to copy number</div>
     </div>
     <p class="form-note" style="margin-bottom:0.75rem">Transfer the total amount, then upload your payment slip below. We confirm your order once the payment is verified.</p>
     <div class="upload-area" id="upload-area">
@@ -422,6 +447,14 @@
     const m = (window._zones || []).find(z => z.name.toLowerCase() === this.value.trim().toLowerCase());
     document.getElementById('other-building-group').style.display = (m && /^Other - Phase/i.test(m.name)) ? '' : 'none';
   });
+
+  function copyAcct(num, el) {
+    navigator.clipboard.writeText(num).then(() => {
+      const hint = el.querySelector('.copy-hint');
+      hint.textContent = 'Copied!';
+      setTimeout(() => hint.textContent = 'Tap to copy', 1500);
+    });
+  }
 
   async function submitOrder() {
     if (!cart.length) return;
