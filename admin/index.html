@@ -111,6 +111,7 @@
     .status-btn.cancel:hover { background: #FBE3E1; }
 
     .empty-state { text-align: center; padding: 2.8rem 1rem; color: var(--mid); font-size: 0.86rem; }
+    .status-btn.wa { background: #25D366; color: white; border-color: #25D366; }
   </style>
 </head>
 <body>
@@ -235,6 +236,25 @@
     return (label === 'kg' ? q.toFixed(1) : String(Math.round(q))) + ' ' + label;
   }
 
+  function shareWhatsApp(id) {
+    const o = allOrders.find(x => x.id === id);
+    if (!o) return;
+    const items = (o.items || []).map(i => `- ${i.product_name}: ${qtyDisplay(i)} (MVR ${parseFloat(i.subtotal).toFixed(2)})`).join('\n');
+    const fee = parseFloat(o.delivery_fee) > 0 ? `MVR ${parseFloat(o.delivery_fee).toFixed(2)}` : 'Free';
+    const msg = `*HTM Marketplace — ${o.order_ref}*\n` +
+      `Status: ${o.status.toUpperCase()}${o.is_next_day ? ' (NEXT DAY)' : ''}\n\n` +
+      `Customer: ${o.customer_name}\n` +
+      `Phone: ${o.customer_phone}\n` +
+      `Building: ${o.zone_name}\n` +
+      `Apartment: ${o.apartment_no}\n` +
+      (o.notes ? `Notes: ${o.notes}\n` : '') +
+      (o.postpone_note ? `Postponed: ${o.postpone_note}\n` : '') +
+      `\n*Items:*\n${items}\n\n` +
+      `Delivery: ${fee}\n` +
+      `*Total: MVR ${parseFloat(o.total_amount).toFixed(2)}*`;
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+  }
+
   function renderOrders() {
     const list = document.getElementById('orders-list');
     const filtered = currentFilter === 'all' ? allOrders : allOrders.filter(o => o.status === currentFilter);
@@ -252,6 +272,7 @@
       }
       if (o.status === 'pending' || o.status === 'confirmed')
         btns.push(`<button class="status-btn cancel" onclick="if(confirm('Cancel this order? Stock will be restored if already deducted.'))updateStatus(${o.id},'cancelled')">Cancel</button>`);
+      btns.push(`<button class="status-btn wa" onclick="shareWhatsApp(${o.id})">Share to WhatsApp</button>`);
 
       const rows = (o.items || []).map(i =>
         `<tr><td>${i.product_name}</td><td>${qtyDisplay(i)}</td><td>MVR ${parseFloat(i.subtotal).toFixed(2)}</td></tr>`
