@@ -392,13 +392,13 @@
     try {
       const res = await fetch(`${API}/zones`);
       const zones = await res.json();
-      const sel = document.getElementById('zone-select');
+      const sel = document.getElementById('zone-list');
       sel.innerHTML = '<option value="">Select building</option>';
       window._zones = zones;
       sel.innerHTML = '';
       zones.forEach(z => { sel.innerHTML += `<option value="${z.name}">`; });
     } catch (err) {
-      document.getElementById('zone-select').innerHTML = '<option value="">Could not load buildings</option>';
+      document.getElementById('zone-select').placeholder = 'Could not load buildings — type it manually';
     }
   }
 
