@@ -216,6 +216,11 @@
         </datalist>
       <div class="err-msg" id="err-zone"></div>
     </div>
+    <div class="form-group" id="other-building-group" style="display:none">
+      <label>Building name</label>
+      <input type="text" id="other-building" placeholder="Your building's name">
+      <div class="err-msg" id="err-other-building"></div>
+    </div>
     <div class="form-group">
       <label>Apartment / Floor</label>
       <input type="text" id="apartment-no" placeholder="e.g. A-701">
@@ -399,6 +404,11 @@
     });
     const zone = document.getElementById('zone-select');
     const zoneMatch = (window._zones || []).find(z => z.name.toLowerCase() === zone.value.trim().toLowerCase());
+    const isOther = zoneMatch && /^Other - Phase/i.test(zoneMatch.name);
+    document.getElementById('other-building-group').style.display = isOther ? '' : 'none';
+    if (isOther && !document.getElementById('other-building').value.trim()) {
+      document.getElementById('err-other-building').textContent = 'Please enter your building name'; ok = false;
+    } else { document.getElementById('err-other-building').textContent = ''; }
     if (!zone.value.trim()) { zone.classList.add('error'); document.getElementById('err-zone').textContent = 'Please enter your building'; ok = false; }
     else if (!zoneMatch) { zone.classList.add('error'); document.getElementById('err-zone').textContent = 'Building not found — pick from the list or choose "Other - Phase 1/2"'; ok = false; }
     else { zone.classList.remove('error'); document.getElementById('err-zone').textContent = ''; window._selectedZoneId = zoneMatch.id; }
@@ -407,6 +417,11 @@
     else { document.getElementById('err-slip').textContent = ''; }
     return ok;
   }
+
+  document.getElementById('zone-select').addEventListener('input', function() {
+    const m = (window._zones || []).find(z => z.name.toLowerCase() === this.value.trim().toLowerCase());
+    document.getElementById('other-building-group').style.display = (m && /^Other - Phase/i.test(m.name)) ? '' : 'none';
+  });
 
   async function submitOrder() {
     if (!cart.length) return;
@@ -423,7 +438,7 @@
       formData.append('customer_phone', document.getElementById('customer-phone').value.trim());
       formData.append('zone_id', window._selectedZoneId);
       formData.append('apartment_no', document.getElementById('apartment-no').value.trim());
-      formData.append('notes', document.getElementById('notes').value.trim());
+      formData.append('notes', (document.getElementById('other-building-group').style.display !== 'none' && document.getElementById('other-building').value.trim() ? '[Building: ' + document.getElementById('other-building').value.trim() + '] ' : '') + document.getElementById('notes').value.trim());
       formData.append('items', JSON.stringify(cart.map(i => ({
         product_id: i.id,
         qty_kg: i.qty,
