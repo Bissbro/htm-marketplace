@@ -83,7 +83,7 @@
     .hero-illustration svg { width:160px; height:auto; }
     .hero-info-strip { display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; margin-top:1.1rem; }
     .hero-point { display:flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:20px; padding:0.35rem 0.75rem; font-size:0.78rem; color:rgba(255,255,255,0.9); font-weight:500; }
-    .hero-point svg { width:13px; height:13px; color:var(--teal); flex-shrink:0; }
+    .hero-pill-dot { width:7px; height:7px; border-radius:50%; background:var(--teal); flex-shrink:0; }
     .hero {
       background: linear-gradient(150deg, var(--navy) 0%, var(--navy-2) 85%);
       padding: 1.9rem 1.1rem 2.1rem;
@@ -123,14 +123,13 @@
       max-width: 440px;
       margin-bottom: 1.1rem;
     }
-    .hero-points { display: flex; gap: 1.1rem; flex-wrap: wrap; }
     .hero-point {
       display: flex; align-items: center; gap: 0.4rem;
       color: rgba(255,255,255,0.82);
       font-size: 0.74rem;
       font-weight: 500;
     }
-    .hero-point svg { width: 13px; height: 13px; color: var(--teal); flex-shrink: 0; }
+
     @media (min-width: 768px) {
       .hero h1 { font-size: 2.1rem; }
       .hero { padding: 2.6rem 1.5rem 2.8rem; }
@@ -414,38 +413,72 @@
 
 <section class="hero">
   <div class="hero-inner">
-    <div class="hero-location">📍 Hulhumalé</div>
+    <div class="hero-location">HULHUMALÉ</div>
     <div class="hero-sub">Groceries &amp; Fresh Produce</div>
     <div class="hero-illustration">
-      <svg viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Basket -->
-        <path d="M60 60 Q65 40 80 38 Q100 35 120 38 Q135 40 140 60 L135 90 Q133 98 125 98 L75 98 Q67 98 65 90 Z" fill="rgba(201,168,76,0.18)" stroke="rgba(201,168,76,0.7)" stroke-width="2"/>
-        <path d="M60 60 L140 60" stroke="rgba(201,168,76,0.7)" stroke-width="2"/>
-        <!-- Basket weave lines -->
-        <path d="M70 60 L68 98" stroke="rgba(201,168,76,0.35)" stroke-width="1"/>
-        <path d="M85 60 L84 98" stroke="rgba(201,168,76,0.35)" stroke-width="1"/>
-        <path d="M100 60 L100 98" stroke="rgba(201,168,76,0.35)" stroke-width="1"/>
-        <path d="M115 60 L116 98" stroke="rgba(201,168,76,0.35)" stroke-width="1"/>
-        <path d="M130 60 L132 98" stroke="rgba(201,168,76,0.35)" stroke-width="1"/>
+      <svg viewBox="0 0 280 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Left side: big fish laying flat -->
+        <ellipse cx="38" cy="85" rx="28" ry="10" fill="rgba(42,157,143,0.35)" transform="rotate(-20 38 85)"/>
+        <path d="M62 72 L72 65 L70 76 Z" fill="rgba(42,157,143,0.35)"/>
+        <circle cx="30" cy="81" r="2.5" fill="rgba(255,255,255,0.5)"/>
+        <!-- Left fish scales suggestion -->
+        <path d="M38 80 Q42 77 46 80" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none"/>
+        <path d="M34 84 Q38 81 42 84" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none"/>
+        <!-- Left: small fish -->
+        <ellipse cx="22" cy="100" rx="16" ry="6" fill="rgba(42,157,143,0.25)" transform="rotate(10 22 100)"/>
+        <path d="M36 96 L43 93 L41 100 Z" fill="rgba(42,157,143,0.25)"/>
+        <!-- Left: wave/water lines -->
+        <path d="M10 110 Q18 106 26 110 Q34 114 42 110" stroke="rgba(42,157,143,0.2)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M5 118 Q15 114 25 118" stroke="rgba(42,157,143,0.15)" stroke-width="1" fill="none" stroke-linecap="round"/>
+
+        <!-- CENTER: Basket -->
+        <path d="M100 72 Q106 52 118 50 Q140 46 162 50 Q174 52 180 72 L175 104 Q173 112 165 112 L115 112 Q107 112 105 104 Z" fill="rgba(201,168,76,0.15)" stroke="rgba(201,168,76,0.75)" stroke-width="2"/>
+        <path d="M100 72 L180 72" stroke="rgba(201,168,76,0.75)" stroke-width="2"/>
+        <!-- Weave verticals -->
+        <path d="M112 72 L110 112" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+        <path d="M125 72 L124 112" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+        <path d="M140 72 L140 112" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+        <path d="M155 72 L156 112" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+        <path d="M168 72 L170 112" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+        <!-- Weave horizontals -->
+        <path d="M104 82 L176 82" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+        <path d="M104 92 L176 92" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+        <path d="M106 102 L174 102" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
         <!-- Handle -->
-        <path d="M80 38 Q80 18 100 16 Q120 18 120 38" stroke="rgba(201,168,76,0.7)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <!-- Fish in basket -->
-        <ellipse cx="88" cy="52" rx="14" ry="6" fill="rgba(42,157,143,0.5)" transform="rotate(-15 88 52)"/>
-        <path d="M100 46 L106 42 L104 50 Z" fill="rgba(42,157,143,0.5)"/>
-        <circle cx="83" cy="49" r="1.5" fill="rgba(255,255,255,0.6)"/>
-        <!-- Second fish -->
-        <ellipse cx="112" cy="53" rx="12" ry="5" fill="rgba(42,157,143,0.4)" transform="rotate(10 112 53)"/>
-        <path d="M123 50 L129 47 L127 54 Z" fill="rgba(42,157,143,0.4)"/>
-        <!-- Leaves/greens sticking out -->
-        <path d="M75 38 Q72 25 68 20 Q74 28 78 35" fill="rgba(255,255,255,0.25)"/>
-        <path d="M90 36 Q88 22 85 17 Q90 25 93 33" fill="rgba(255,255,255,0.2)"/>
-        <!-- Water drops / fresh indicator -->
-        <circle cx="150" cy="35" r="3" fill="rgba(42,157,143,0.4)"/>
-        <circle cx="158" cy="45" r="2" fill="rgba(42,157,143,0.3)"/>
-        <circle cx="145" cy="48" r="1.5" fill="rgba(42,157,143,0.25)"/>
+        <path d="M118 50 Q118 28 140 26 Q162 28 162 50" stroke="rgba(201,168,76,0.75)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Fish inside basket -->
+        <ellipse cx="128" cy="64" rx="16" ry="6" fill="rgba(42,157,143,0.55)" transform="rotate(-12 128 64)"/>
+        <path d="M142 57 L150 52 L148 61 Z" fill="rgba(42,157,143,0.55)"/>
+        <circle cx="122" cy="61" r="2" fill="rgba(255,255,255,0.65)"/>
+        <ellipse cx="152" cy="66" rx="13" ry="5" fill="rgba(42,157,143,0.4)" transform="rotate(8 152 66)"/>
+        <path d="M163 62 L170 59 L168 66 Z" fill="rgba(42,157,143,0.4)"/>
+        <!-- Greens poking out top of basket -->
+        <path d="M122 50 Q118 36 114 28 Q120 38 124 48" fill="rgba(255,255,255,0.2)"/>
+        <path d="M134 48 Q132 32 129 24 Q134 34 136 46" fill="rgba(255,255,255,0.18)"/>
+        <path d="M146 48 Q148 33 152 26 Q148 36 146 46" fill="rgba(255,255,255,0.15)"/>
+
+        <!-- RIGHT side: coconut / local produce -->
+        <ellipse cx="220" cy="90" rx="14" ry="13" fill="rgba(201,168,76,0.2)" stroke="rgba(201,168,76,0.4)" stroke-width="1.5"/>
+        <path d="M214 82 Q220 76 226 82" stroke="rgba(201,168,76,0.4)" stroke-width="1" fill="none"/>
+        <!-- Coconut lines -->
+        <path d="M220 78 L220 90" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+        <!-- Palm leaf suggestion -->
+        <path d="M228 75 Q238 62 248 58 Q240 66 232 76" fill="rgba(255,255,255,0.15)"/>
+        <path d="M232 72 Q245 65 255 68 Q244 70 234 76" fill="rgba(255,255,255,0.12)"/>
+        <!-- Right: small fish -->
+        <ellipse cx="248" cy="95" rx="18" ry="7" fill="rgba(42,157,143,0.3)" transform="rotate(-8 248 95)"/>
+        <path d="M263 89 L272 85 L270 93 Z" fill="rgba(42,157,143,0.3)"/>
+        <circle cx="241" cy="93" r="2" fill="rgba(255,255,255,0.4)"/>
+        <!-- Right water lines -->
+        <path d="M238 110 Q248 106 258 110 Q268 114 275 110" stroke="rgba(42,157,143,0.2)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- Sparkle dots -->
+        <circle cx="90" cy="55" r="1.5" fill="rgba(201,168,76,0.4)"/>
+        <circle cx="82" cy="65" r="1" fill="rgba(201,168,76,0.3)"/>
+        <circle cx="195" cy="48" r="1.5" fill="rgba(201,168,76,0.4)"/>
+        <circle cx="200" cy="60" r="1" fill="rgba(201,168,76,0.3)"/>
       </svg>
     </div>
-    <h1>The Taste of the Maldives, <em>Delivered to Your Door</em></h1>
+    <h1 style="text-align:center">The Taste of the Maldives, <em>Delivered to Your Door</em></h1>
     <div class="hero-info-strip" id="hero-points"></div>
   </div>
 </section>
@@ -666,7 +699,7 @@
     return m === 0 ? `${h12} ${ampm}` : `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
   }
 
-  const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const CHECK = `<span class="hero-pill-dot"></span>`;
 
   function renderSettings(s) {
     const points = [];
