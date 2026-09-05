@@ -554,14 +554,16 @@
       </div>`;
 
     return `
-    <div class="card ${inStock ? '' : 'sold-out'}" onclick="if(!event.target.closest('.step-btn,.qty-input'))location.href='product.html?id='+p.id">
-      <div class="card-img">${img}${pill}</div>
-      <div class="card-body">
-        <div class="p-name">${p.name}</div>
-        ${sub}
-        <div class="p-price">MVR ${parseFloat(p.price_per_kg).toFixed(2)}<span>/ ${p.unit_label}</span></div>
-        ${controls}
-      </div>
+    <div class="card ${inStock ? '' : 'sold-out'}">
+      <a href="product.html?id=${p.id}" style="text-decoration:none;color:inherit;display:block">
+        <div class="card-img">${img}${pill}</div>
+        <div class="card-body">
+          <div class="p-name">${p.name}</div>
+          ${sub}
+          <div class="p-price">MVR ${parseFloat(p.price_per_kg).toFixed(2)}<span>/ ${p.unit_label}</span></div>
+        </div>
+      </a>
+      <div class="card-body" style="padding-top:0">${controls}</div>
     </div>`;
   }
 
