@@ -554,7 +554,7 @@
       </div>`;
 
     return `
-    <div class="card ${inStock ? '' : 'sold-out'}">
+    <div class="card ${inStock ? '' : 'sold-out'}" onclick="if(!event.target.closest('.step-btn,.qty-input'))location.href='product.html?id='+p.id">
       <div class="card-img">${img}${pill}</div>
       <div class="card-body">
         <div class="p-name">${p.name}</div>
